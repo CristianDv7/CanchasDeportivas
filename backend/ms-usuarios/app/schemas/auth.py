@@ -7,6 +7,8 @@ class LoginRequest(BaseModel):
 
 
 class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str
     usuario_id: int
     nombre: str
     email: EmailStr
