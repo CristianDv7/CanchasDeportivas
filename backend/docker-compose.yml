@@ -2,19 +2,20 @@ services:
 
   postgres:
     image: postgres:16
-    container_name: backend-canchas-deportivas
+    container_name: backend-postgres
     restart: unless-stopped
 
     environment:
-      POSTGRES_DB: backendcanchasdeportivas
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: backend
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
 
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
 
 volumes:
   postgres_data:
