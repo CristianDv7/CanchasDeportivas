@@ -1,15 +1,15 @@
 // Único archivo que conoce los paths reales de ms-reservas (design.md §1).
-// `getDisponibilidad` vive aislada a propósito: el contrato real
-// `GET /reservas/disponibilidad` está PROPUESTO, no implementado todavía por
-// Cristian (docs/propuestas/ms-reservas-endpoint-disponibilidad.md). Sin
-// test unitario propio — se cubre con integración vía MSW mockeando el
-// contrato propuesto (design.md §7 "Decisión: el endpoint pendiente...").
-// Si el contrato cambia o se descarta (plan B), el único cuerpo a tocar es
-// el de esta función.
+// `getDisponibilidad` combina dos fuentes: `canchasApi.getHorariosAtencion`
+// (ms-canchas) y el contrato REAL de `GET /reservas/disponibilidad`
+// (`list[ReservaResponse]`, ya no la grilla propuesta) — el backend ya no
+// arma la grilla, la arma el adapter vía `buildDisponibilidad` (mappers.ts).
+// Sin test unitario propio: se cubre con integración vía MSW (contrato real)
+// más los tests unitarios de `buildDisponibilidad` en mappers.test.ts.
 import { apiClient } from "shell/apiClient";
+import { canchasApi } from "./canchasApi";
 import type { Disponibilidad, IsoDate, NuevaReservaInput, Reserva } from "./dto";
-import { toDisponibilidad, toReserva, toReservaCreateBody } from "./mappers";
-import type { DisponibilidadRaw, ReservaRaw } from "./raw";
+import { buildDisponibilidad, toReserva, toReservaCreateBody } from "./mappers";
+import type { ReservaRaw } from "./raw";
 
 export const reservasApi = {
   /** Fetcher compatible con `useResource<Reserva[]>`: `(signal) => Promise<T>`. */
@@ -39,17 +39,21 @@ export const reservasApi = {
     return toReserva(raw);
   },
 
-  // ⚠️ Contrato propuesto, no implementado por el backend (design.md §1/§7).
   async getDisponibilidad(
     canchaId: number,
     fecha: IsoDate,
     signal?: AbortSignal,
   ): Promise<Disponibilidad> {
-    const raw = await apiClient.get<DisponibilidadRaw>("/reservas/disponibilidad", {
-      service: "reservas",
-      query: { cancha_id: canchaId, fecha },
-      signal,
-    });
-    return toDisponibilidad(raw);
+    // Desacopladas a propósito (Promise.all): ninguna depende del resultado
+    // de la otra.
+    const [horarios, reservasRaw] = await Promise.all([
+      canchasApi.getHorariosAtencion(canchaId, signal),
+      apiClient.get<ReservaRaw[]>("/reservas/disponibilidad", {
+        service: "reservas",
+        query: { cancha_id: canchaId, fecha },
+        signal,
+      }),
+    ]);
+    return buildDisponibilidad(canchaId, fecha, horarios, reservasRaw.map(toReserva));
   },
 };

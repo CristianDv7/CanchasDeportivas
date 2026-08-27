@@ -3,15 +3,31 @@
 // `/api/{service}/**`, nunca `http://localhost:8003/**`. Paths reales:
 // design.md §1.
 import { HttpResponse, http } from "msw";
-import { canchasRaw, disponibilidadRaw, reservasRaw } from "./fixtures";
+import { canchasRaw, disponibilidadReservasRaw, horariosAtencionRaw, reservasRaw } from "./fixtures";
 
 export const handlers = [
   http.get("/api/canchas/canchas", () => HttpResponse.json(canchasRaw)),
 
   http.get("/api/reservas/reservas/", () => HttpResponse.json(reservasRaw)),
 
-  // ⚠️ Contrato propuesto, no implementado por el backend (design.md §1/§7).
-  http.get("/api/reservas/reservas/disponibilidad", () => HttpResponse.json(disponibilidadRaw)),
+  // Contrato REAL: `list[HorarioAtencionResponse]` filtrado por `cancha_id`.
+  http.get("/api/canchas/horarios-atencion", ({ request }) => {
+    const canchaId = new URL(request.url).searchParams.get("cancha_id");
+    return HttpResponse.json(horariosAtencionRaw.filter((h) => String(h.cancha_id) === canchaId));
+  }),
+
+  // Contrato REAL: `list[ReservaResponse]` (Confirmada) filtrado por
+  // `cancha_id`+`fecha` — ya NO es la grilla armada del contrato propuesto.
+  http.get("/api/reservas/reservas/disponibilidad", ({ request }) => {
+    const url = new URL(request.url);
+    const canchaId = url.searchParams.get("cancha_id");
+    const fecha = url.searchParams.get("fecha");
+    return HttpResponse.json(
+      disponibilidadReservasRaw.filter(
+        (r) => String(r.cancha_id) === canchaId && r.fecha === fecha,
+      ),
+    );
+  }),
 
   http.post("/api/reservas/reservas/", async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;

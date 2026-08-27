@@ -7,7 +7,7 @@ import { HttpResponse, http } from "msw";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
-import { disponibilidadRaw } from "../../mocks/fixtures";
+import { disponibilidadReservasRaw } from "../../mocks/fixtures";
 import { errorScenarios } from "../../mocks/handlers";
 import { seedSession } from "../../mocks/session";
 import { server } from "../../mocks/server";
@@ -59,7 +59,7 @@ describe("NuevaReservaPage", () => {
     server.use(
       http.get("/api/reservas/reservas/disponibilidad", () => {
         disponibilidadCalls += 1;
-        return HttpResponse.json(disponibilidadRaw);
+        return HttpResponse.json(disponibilidadReservasRaw);
       }),
       errorScenarios.crear400("Ya existe una reserva para ese horario."),
     );
@@ -89,7 +89,7 @@ describe("NuevaReservaPage", () => {
     server.use(
       http.get("/api/reservas/reservas/disponibilidad", () => {
         disponibilidadCalls += 1;
-        return HttpResponse.json(disponibilidadRaw);
+        return HttpResponse.json(disponibilidadReservasRaw);
       }),
       http.post("/api/reservas/reservas/", () =>
         HttpResponse.json({ detail: "irrelevante para la UI" }, { status: 403 }),
@@ -118,7 +118,7 @@ describe("NuevaReservaPage", () => {
     server.use(
       http.get("/api/reservas/reservas/disponibilidad", () => {
         disponibilidadCalls += 1;
-        return HttpResponse.json(disponibilidadRaw);
+        return HttpResponse.json(disponibilidadReservasRaw);
       }),
       http.post("/api/reservas/reservas/", () =>
         HttpResponse.json({ detail: "Cancha inexistente." }, { status: 404 }),
@@ -146,7 +146,7 @@ describe("NuevaReservaPage", () => {
     server.use(
       http.get("/api/reservas/reservas/disponibilidad", () => {
         disponibilidadCalls += 1;
-        return HttpResponse.json(disponibilidadRaw);
+        return HttpResponse.json(disponibilidadReservasRaw);
       }),
       errorScenarios.unprocessable422(),
     );

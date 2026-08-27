@@ -25,6 +25,15 @@ export interface Cancha {
   readonly activa: boolean;
 }
 
+export interface HorarioAtencion {
+  readonly id: number;
+  readonly canchaId: number;
+  readonly diaSemana: number; // ISO 1-7 (1=lunes)
+  readonly horaInicio: IsoTime;
+  readonly horaFin: IsoTime;
+  readonly activo: boolean;
+}
+
 export interface BloqueDisponibilidad {
   readonly horaInicio: IsoTime;
   readonly horaFin: IsoTime;
