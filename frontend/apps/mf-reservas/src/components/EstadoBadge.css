@@ -1,0 +1,27 @@
+.mfr-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+}
+
+.mfr-badge[data-tone="success"] {
+  color: var(--turf-text);
+  background: var(--turf-soft);
+}
+
+.mfr-badge[data-tone="neutral"] {
+  color: var(--ink-muted);
+  background: var(--bg);
+  border: 1px solid var(--line);
+}
+
+.mfr-badge[data-tone="info"] {
+  color: #2a5c8f;
+  background: #e5edf5;
+}

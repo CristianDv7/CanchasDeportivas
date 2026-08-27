@@ -12,6 +12,7 @@ import {
   type ComponentType,
   type ReactNode,
 } from "react";
+import "./RemoteBoundary.css";
 
 export interface RemoteBoundaryProps {
   /** Nombre visible del remote, p.ej. 'mf-reservas'. */
@@ -44,9 +45,9 @@ class RemoteErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySta
   render(): ReactNode {
     if (this.state.hasError) {
       return (
-        <div role="alert">
+        <div role="alert" className="shell-remote-error">
           <p>{this.props.name} no disponible.</p>
-          <button type="button" onClick={this.props.onRetry}>
+          <button type="button" className="shell-remote-retry" onClick={this.props.onRetry}>
             Reintentar
           </button>
         </div>
@@ -65,7 +66,7 @@ export function RemoteBoundary({ name, loader }: RemoteBoundaryProps) {
 
   return (
     <RemoteErrorBoundary key={retryToken} name={name} onRetry={() => setRetryToken((t) => t + 1)}>
-      <Suspense fallback={<p>Cargando {name}…</p>}>
+      <Suspense fallback={<p className="shell-remote-loading">Cargando {name}…</p>}>
         <LazyRemote />
       </Suspense>
     </RemoteErrorBoundary>

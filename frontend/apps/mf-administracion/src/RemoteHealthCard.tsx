@@ -4,6 +4,7 @@ import { useState } from "react";
 import { apiClient } from "shell/apiClient";
 import { useSession } from "shell/session";
 import { env } from "./config/env";
+import "./RemoteHealthCard.css";
 
 type ProbeStatus = "idle" | "checking" | "connected" | "not-connected";
 
@@ -28,8 +29,10 @@ export function RemoteHealthCard() {
   }
 
   return (
-    <section aria-label="Estado de mf-administracion">
-      <h2 data-testid="remote-name">{env.remoteName}</h2>
+    <section aria-label="Estado de mf-administracion" className="mf-placeholder-card">
+      <h2 data-testid="remote-name" className="mf-placeholder-title">
+        {env.remoteName}
+      </h2>
       <dl>
         <dt>Build</dt>
         <dd data-testid="build-id">{env.buildId}</dd>
@@ -41,19 +44,21 @@ export function RemoteHealthCard() {
         <dd data-testid="session-rol">{rol ?? "desconocido"}</dd>
       </dl>
 
-      <button type="button" onClick={() => setCount((c) => c + 1)}>
-        +1 (contador: {count})
-      </button>
+      <div className="mf-placeholder-actions">
+        <button type="button" onClick={() => setCount((c) => c + 1)}>
+          +1 (contador: {count})
+        </button>
 
-      <button type="button" onClick={() => setForceError(true)}>
-        Forzar error
-      </button>
+        <button type="button" onClick={() => setForceError(true)}>
+          Forzar error
+        </button>
 
-      <button type="button" onClick={() => void checkBackend()}>
-        Probar backend
-      </button>
+        <button type="button" onClick={() => void checkBackend()}>
+          Probar backend
+        </button>
+      </div>
       {probeStatus !== "idle" && (
-        <p data-testid="backend-status">
+        <p data-testid="backend-status" className="mf-placeholder-status">
           {probeStatus === "checking" && "verificando…"}
           {probeStatus === "connected" && "conectado"}
           {probeStatus === "not-connected" && "no conectado"}

@@ -5,7 +5,7 @@ Workspace pnpm con 4 apps independientes unidas por Module Federation 2.0 (Rsbui
 | App | Puerto | Rol |
 |-----|--------|-----|
 | `shell` | 3000 | Host: layout, router, login, `SessionStore`, `apiClient` (federados) |
-| `mf-reservas` | 3001 | Remote — reservas |
+| `mf-reservas` | 3001 | Remote — disponibilidad, nueva reserva, mis reservas (flujo real) |
 | `mf-administracion` | 3002 | Remote — administración |
 | `mf-reportes` | 3003 | Remote — reportes |
 
@@ -13,7 +13,9 @@ Workspace pnpm con 4 apps independientes unidas por Module Federation 2.0 (Rsbui
 
 ### Backend (Postgres + ms-usuarios)
 
-Los otros 3 microservicios (`ms-canchas`, `ms-reservas`, `ms-reportes`) los lleva un compañero — **no hace falta que corran** para trabajar en el shell o en `mf-reservas` (el login solo pega contra `ms-usuarios`; los `RemoteHealthCard` de los otros remotes degradan a "no conectado" si su servicio no está arriba, sin romper nada).
+Los otros 3 microservicios (`ms-canchas`, `ms-reservas`, `ms-reportes`) los lleva un compañero. Para el shell y para `mf-administracion`/`mf-reportes` (todavía placeholders `RemoteHealthCard`) **no hace falta que corran** — el login solo pega contra `ms-usuarios`, y esos remotes degradan a "no conectado" si su servicio no está arriba.
+
+**`mf-reservas` sí los necesita** para probar el flujo real a mano en el navegador: `ms-canchas` (catálogo de canchas) y `ms-reservas` (reservas). Ojo con un límite conocido: `GET /reservas/disponibilidad` — el endpoint que arma la grilla de disponibilidad — **todavía no existe en el backend real** (propuesta pendiente para Cristian, ver `docs/propuestas/ms-reservas-endpoint-disponibilidad.md`), así que la pantalla de Disponibilidad va a fallar contra el backend real hasta que se implemente. El resto del flujo (`GET/POST/PATCH /reservas`, `GET /canchas`) sí es real y funciona. Para correr los tests (`pnpm test`), no hace falta nada de esto — están mockeados con MSW.
 
 ```bash
 cd backend
@@ -66,7 +68,7 @@ Validado según el plan de `design.md` §8 (tabla de pruebas A-F). Resultado rea
 
 | # | Escenario | Resultado |
 |---|-----------|-----------|
-| A | Editar un string dentro de un remote (`mf-reservas/src/App.tsx`) | **PASS** — hot update real, estado preservado (contador de `RemoteHealthCard` no se resetea) |
+| A | Editar un string dentro de un remote (`mf-administracion/src/App.tsx`, con `RemoteHealthCard`) | **PASS** — hot update real, estado preservado (contador de `RemoteHealthCard` no se resetea) |
 | B | Agregar lógica a un hook de un remote | **PASS** — igual que A |
 | C | Editar el header del shell (`RootLayout.tsx`) | Degradación **aceptada**: recompilar el shell puede remontar los remotes y resetear su estado local |
 | D | Cambiar la superficie federada del shell (`shell/src/http/index.ts`, `shell/src/session`) | Degradación **aceptada**: los remotes ya cargados pueden quedar con la versión vieja del módulo federado hasta un `F5` manual |

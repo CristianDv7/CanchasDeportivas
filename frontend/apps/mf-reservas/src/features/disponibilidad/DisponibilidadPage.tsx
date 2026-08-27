@@ -11,6 +11,7 @@ import { useResource } from "../../hooks/useResource";
 import { BloquesGrid } from "./BloquesGrid";
 import { CanchaFechaPicker } from "./CanchaFechaPicker";
 import { useDisponibilidad } from "./useDisponibilidad";
+import "./DisponibilidadPage.css";
 
 export function DisponibilidadPage() {
   const canchas = useResource(canchasApi.list, []);
@@ -21,7 +22,7 @@ export function DisponibilidadPage() {
 
   return (
     <section>
-      <h2>Disponibilidad</h2>
+      <h2 className="mfr-page-title">Disponibilidad</h2>
 
       {canchas.error && <ErrorBanner error={canchas.error} onRetry={canchas.refetch} />}
 
@@ -38,7 +39,7 @@ export function DisponibilidadPage() {
       )}
 
       {disponibilidad.status === "loading" && disponibilidad.data === null && (
-        <p>Cargando disponibilidad…</p>
+        <p className="mfr-loading">Cargando disponibilidad…</p>
       )}
 
       {disponibilidad.data && <BloquesGrid bloques={disponibilidad.data.bloques} />}
