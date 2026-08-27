@@ -1,0 +1,69 @@
+// Handlers MSW en el espacio de URL del BROWSER (design.md §9): interceptan
+// `fetch` ANTES del proxy del dev server, así que se mockea
+// `/api/{service}/**`, nunca `http://localhost:8003/**`. Paths reales:
+// design.md §1.
+import { HttpResponse, http } from "msw";
+import { canchasRaw, disponibilidadRaw, reservasRaw } from "./fixtures";
+
+export const handlers = [
+  http.get("/api/canchas/canchas", () => HttpResponse.json(canchasRaw)),
+
+  http.get("/api/reservas/reservas/", () => HttpResponse.json(reservasRaw)),
+
+  // ⚠️ Contrato propuesto, no implementado por el backend (design.md §1/§7).
+  http.get("/api/reservas/reservas/disponibilidad", () => HttpResponse.json(disponibilidadRaw)),
+
+  http.post("/api/reservas/reservas/", async ({ request }) => {
+    const body = (await request.json()) as Record<string, unknown>;
+    return HttpResponse.json(
+      {
+        id: 99,
+        usuario_id: body.usuario_id,
+        cancha_id: body.cancha_id,
+        fecha: body.fecha,
+        hora_inicio: body.hora_inicio,
+        hora_fin: body.hora_fin,
+        estado: "Confirmada",
+        created_at: "2026-08-26T00:00:00",
+        updated_at: "2026-08-26T00:00:00",
+      },
+      { status: 201 },
+    );
+  }),
+
+  http.patch("/api/reservas/reservas/:id/cancelar", ({ params }) => {
+    const reserva = reservasRaw.find((r) => String(r.id) === params.id);
+    return HttpResponse.json({ ...(reserva ?? reservasRaw[0]), estado: "Cancelada" });
+  }),
+];
+
+/**
+ * Escenarios de error como factories, para `server.use(errorScenarios.x())`
+ * por test (design.md §9/§10). No forman parte del set de handlers por
+ * default: cada test los activa explícitamente y `afterEach(() =>
+ * server.resetHandlers())` los limpia.
+ */
+export const errorScenarios = {
+  crear400: (detail: string) =>
+    http.post("/api/reservas/reservas/", () => HttpResponse.json({ detail }, { status: 400 })),
+
+  cancelar403: () =>
+    http.patch("/api/reservas/reservas/:id/cancelar", () =>
+      HttpResponse.json({ detail: "No autorizado." }, { status: 403 }),
+    ),
+
+  notFound404: () =>
+    http.patch("/api/reservas/reservas/:id/cancelar", () =>
+      HttpResponse.json({ detail: "No encontrada." }, { status: 404 }),
+    ),
+
+  unprocessable422: () =>
+    http.post("/api/reservas/reservas/", () =>
+      HttpResponse.json(
+        { detail: [{ loc: ["body", "fecha"], msg: "campo inválido", type: "value_error" }] },
+        { status: 422 },
+      ),
+    ),
+
+  networkDown: () => http.get("/api/canchas/canchas", () => HttpResponse.error()),
+};
