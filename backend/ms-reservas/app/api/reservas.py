@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-
+from datetime import date
 from app.core.dependencies import get_current_user
 from app.db.database import get_db
 from app.schemas.reserva import (
@@ -143,3 +143,33 @@ def cancelar_reserva(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=str(error),
         )
+
+@router.get(
+    "/disponibilidad",
+    response_model=list[ReservaResponse],
+)
+def consultar_disponibilidad(
+    cancha_id: int,
+    fecha: date,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    """
+    Consulta los horarios ocupados de una cancha
+    para una fecha determinada.
+
+    Las reservas canceladas no se muestran,
+    por lo que sus horarios se consideran disponibles.
+    """
+
+    if cancha_id <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="El cancha_id debe ser mayor que 0",
+        )
+
+    return ReservaService.get_disponibilidad(
+        db,
+        cancha_id,
+        fecha,
+    )

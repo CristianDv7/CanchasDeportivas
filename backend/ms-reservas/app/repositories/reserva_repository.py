@@ -114,3 +114,26 @@ class ReservaRepository:
         db.flush()
 
         return reserva
+
+    @staticmethod
+    def get_reservas_por_cancha_fecha(
+        db: Session,
+        cancha_id: int,
+        fecha: date,
+    ) -> list[Reserva]:
+
+        statement = (
+            select(Reserva)
+            .where(
+                Reserva.cancha_id == cancha_id,
+                Reserva.fecha == fecha,
+                Reserva.estado == "Confirmada",
+            )
+            .order_by(
+                Reserva.hora_inicio,
+            )
+        )
+
+        return list(
+            db.scalars(statement).all()
+        )

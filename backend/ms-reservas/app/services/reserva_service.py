@@ -294,3 +294,16 @@ class ReservaService:
             db.refresh(reserva)
 
         return reserva
+
+    @staticmethod
+    def get_disponibilidad(
+        db: Session,
+        cancha_id: int,
+        fecha: date,
+    ) -> list[Reserva]:
+
+        return ReservaRepository.get_reservas_por_cancha_fecha(
+            db,
+            cancha_id,
+            fecha,
+        )
