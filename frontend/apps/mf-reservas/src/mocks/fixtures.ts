@@ -56,3 +56,23 @@ export const disponibilidadRaw = {
     { hora_inicio: "10:00:00", hora_fin: "11:00:00", estado: "ocupado" },
   ],
 };
+
+// Factory para overrides puntuales en tests (p. ej. MisReservasPage.test.tsx),
+// sin importar `ReservaRaw` de `src/api/raw.ts` (regla dura de desacople,
+// api/raw.ts línea 1-3): el shape se deriva estructuralmente de `reservasRaw`.
+type ReservaRawFixture = (typeof reservasRaw)[number];
+
+export function reservaRaw(overrides: Partial<ReservaRawFixture> = {}): ReservaRawFixture {
+  return {
+    id: 1,
+    usuario_id: 1,
+    cancha_id: 1,
+    fecha: "2026-07-01",
+    hora_inicio: "10:00:00",
+    hora_fin: "11:00:00",
+    estado: "Confirmada",
+    created_at: "2026-06-01T00:00:00",
+    updated_at: "2026-06-01T00:00:00",
+    ...overrides,
+  };
+}
