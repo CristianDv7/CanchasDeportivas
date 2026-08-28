@@ -1,0 +1,20 @@
+.mfa-horarios-semana {
+  margin-top: var(--space-3);
+}
+
+.mfa-horarios-lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.mfa-horarios-fila {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.mfa-horarios-dia {
+  width: 6rem;
+  font-weight: 600;
+}

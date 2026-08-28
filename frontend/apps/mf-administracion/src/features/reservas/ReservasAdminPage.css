@@ -1,0 +1,10 @@
+.mfa-reservas-contador {
+  color: var(--ink-muted);
+  font-size: 0.85rem;
+  margin-bottom: var(--space-3);
+}
+
+.mfa-reservas-admin-lista {
+  display: flex;
+  flex-direction: column;
+}
