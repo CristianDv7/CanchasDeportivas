@@ -1,0 +1,29 @@
+/* Sub-nav interno de mf-administracion — mismo patrón que
+   mf-reservas/src/App.css: navega entre las pantallas de ESTE remote. */
+.mfa-subnav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: var(--space-4);
+}
+
+.mfa-subnav a {
+  color: var(--ink-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: var(--space-1) 0;
+  border-bottom: 2px solid transparent;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.mfa-subnav a:hover {
+  color: var(--ink);
+}
+
+.mfa-subnav a.active {
+  color: var(--turf-text);
+  border-bottom-color: var(--turf);
+}

@@ -1,0 +1,30 @@
+/* Sub-nav interno de mf-reservas — mismo lenguaje visual que el nav del
+   shell (RootLayout.css), pero un nivel más abajo: navega entre las 3
+   pantallas de ESTE remote, no entre remotes. */
+.mfr-subnav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: var(--space-4);
+}
+
+.mfr-subnav a {
+  color: var(--ink-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: var(--space-1) 0;
+  border-bottom: 2px solid transparent;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.mfr-subnav a:hover {
+  color: var(--ink);
+}
+
+.mfr-subnav a.active {
+  color: var(--turf-text);
+  border-bottom-color: var(--turf);
+}
