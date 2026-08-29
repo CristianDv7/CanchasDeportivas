@@ -1,97 +1,44 @@
-/*
- * Signature element (frontend-design): la grilla de disponibilidad como
- * pizarra de turnos real — horarios en monoespaciada, chips libre/ocupado
- * con puntito indicador, separadores tipo "línea de red" (borde punteado).
- * Único lugar del proyecto donde el diseño se permite "lucirse".
- */
+/* Unificado con ReservaForm (Nueva reserva, 2026-08-29): misma tarjeta,
+ * mismo grid, mismo tratamiento mono/estado — para que Disponibilidad y
+ * Nueva reserva se sientan la misma pantalla en dos modos (lectura vs.
+ * selección), no dos diseños distintos. */
 
 .mfr-bloques-grid {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
-  overflow: hidden;
+  padding: var(--space-4);
 }
 
-.mfr-bloques-grid-header {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: var(--space-4);
-  padding: var(--space-3) var(--space-4);
-  background: var(--bg);
-  border-bottom: 1px solid var(--line);
-}
-
-.mfr-bloques-grid-header span {
+.mfr-bloques-grid-label {
+  display: block;
   font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-muted);
+  margin-bottom: var(--space-3);
+}
+
+.mfr-bloques-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-2);
 }
 
 .mfr-bloque {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-4);
-  transition: background var(--transition);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
 }
 
-.mfr-bloque:not(:first-child) {
-  /* "línea de red": separador punteado entre turnos, como una cancha rayada */
-  border-top: 1px dashed var(--line);
-}
-
-.mfr-bloque:hover {
+.mfr-bloque[data-estado="ocupado"] {
+  color: var(--ink-muted);
   background: var(--bg);
-}
-
-.mfr-bloque-hora {
-  font-family: var(--font-mono);
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--ink);
-  letter-spacing: 0.01em;
-}
-
-.mfr-bloque-estado {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: var(--space-1) var(--space-3);
-  border-radius: 999px;
-}
-
-.mfr-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  flex-shrink: 0;
-}
-
-.mfr-bloque[data-estado="libre"] .mfr-bloque-estado {
-  color: var(--turf-text);
-  background: var(--turf-soft);
-}
-
-.mfr-bloque[data-estado="libre"] .mfr-dot {
-  background: var(--turf);
-}
-
-.mfr-bloque[data-estado="ocupado"] .mfr-bloque-estado {
-  color: var(--clay-text);
-  background: var(--clay-soft);
-}
-
-.mfr-bloque[data-estado="ocupado"] .mfr-dot {
-  background: var(--clay);
+  text-decoration: line-through;
 }
 
 .mfr-bloques-grid-vacia {

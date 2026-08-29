@@ -2,6 +2,10 @@
 // adapter tal cual (`libre`/`ocupado`), sin inferir ocupación de otra
 // fuente. Cancha sin horario ese día ⇒ `bloques` vacío ⇒ mensaje vacío, sin
 // error (design.md §7, requirement "Cancha sin horario de atención ese día").
+// Mismo layout de grilla de tarjetas que ReservaForm (Nueva reserva) —
+// unificado a pedido (2026-08-29): antes era una tabla con look propio
+// ("pizarra de turnos"), ahora usa el mismo lenguaje visual en toda la
+// sección Reservas. No es interactivo (sin radios): es solo lectura.
 import type { BloqueDisponibilidad } from "../../api";
 import "./BloquesGrid.css";
 
@@ -20,26 +24,19 @@ export function BloquesGrid({ bloques }: BloquesGridProps) {
 
   return (
     <div data-testid="bloques-grid" className="mfr-bloques-grid">
-      <div className="mfr-bloques-grid-header">
-        <span>Horario</span>
-        <span>Estado</span>
+      <span className="mfr-bloques-grid-label">Horarios</span>
+      <div className="mfr-bloques-options">
+        {bloques.map((bloque) => (
+          <div
+            key={`${bloque.horaInicio}-${bloque.horaFin}`}
+            data-testid="bloque"
+            data-estado={bloque.estado}
+            className="mfr-bloque"
+          >
+            {bloque.horaInicio.slice(0, 5)}–{bloque.horaFin.slice(0, 5)} · {bloque.estado}
+          </div>
+        ))}
       </div>
-      {bloques.map((bloque) => (
-        <div
-          key={`${bloque.horaInicio}-${bloque.horaFin}`}
-          data-testid="bloque"
-          data-estado={bloque.estado}
-          className="mfr-bloque"
-        >
-          <span className="mfr-bloque-hora">
-            {bloque.horaInicio.slice(0, 5)}–{bloque.horaFin.slice(0, 5)}
-          </span>
-          <span className="mfr-bloque-estado">
-            <span className="mfr-dot" aria-hidden="true" />
-            {bloque.estado}
-          </span>
-        </div>
-      ))}
     </div>
   );
 }
