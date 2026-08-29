@@ -1,6 +1,6 @@
 // design.md §4 (diagrama de secuencia login + route guard).
 import { useState, type FormEvent } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSession } from "../session/useSession";
 import "./LoginPage.css";
 
@@ -70,6 +70,10 @@ export function LoginPage() {
             {formError}
           </p>
         )}
+
+        <Link to="/registro" className="shell-login-link">
+          No tengo cuenta — Crear cuenta
+        </Link>
       </form>
     </div>
   );

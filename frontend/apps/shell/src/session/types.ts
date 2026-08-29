@@ -36,6 +36,12 @@ export interface Session {
   readonly error: ApiError | null;
 
   login(credentials: { email: string; password: string }): Promise<SessionUser>;
+  register(input: {
+    nombre: string;
+    apellido: string;
+    email: string;
+    password: string;
+  }): Promise<SessionUser>;
   logout(reason?: LogoutReason): void;
   /** OR lógico. hasRole() sin args ⇔ isAuthenticated. */
   hasRole(...roles: Rol[]): boolean;

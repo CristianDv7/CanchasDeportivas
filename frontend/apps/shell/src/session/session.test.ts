@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { login, logout } from "./session";
+import { login, logout, register } from "./session";
 import { getOrCreateSessionStore } from "./store";
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -72,6 +72,77 @@ describe("login()", () => {
       status: 401,
       code: "unauthorized",
     });
+
+    expect(getOrCreateSessionStore().getSnapshot().status).toBe("anonymous");
+    expect(getOrCreateSessionStore().getSnapshot().token).toBeNull();
+  });
+});
+
+describe("register()", () => {
+  beforeEach(() => {
+    getOrCreateSessionStore().clear();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("éxito: POST /usuarios con rol_id fijo en 1 (usuario), luego autologin deja la sesión autenticada", async () => {
+    const calls: Array<{ url: string; body: unknown }> = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockImplementation(async (url: string, init: RequestInit) => {
+        const body = JSON.parse(init.body as string);
+        calls.push({ url, body });
+        // OJO: el servicio se llama "usuarios" y aparece en TODAS las URLs de
+        // ms-usuarios (incluida /auth/login) — hay que distinguir por el
+        // recurso final, no con un includes() suelto.
+        if (url.endsWith("/usuarios")) {
+          return jsonResponse({
+            id: 5,
+            nombre: body.nombre,
+            apellido: body.apellido,
+            email: body.email,
+            telefono: null,
+            rol_id: body.rol_id,
+            activo: true,
+          });
+        }
+        // /auth/login solo manda {email, password} — el nombre viene del
+        // POST /usuarios anterior en esta misma secuencia (autologin).
+        return jsonResponse({
+          access_token: "tok-nuevo",
+          token_type: "bearer",
+          usuario_id: 5,
+          nombre: "Nueva",
+          email: body.email,
+          rol: "usuario",
+        });
+      }),
+    );
+
+    const user = await register({
+      nombre: "Nueva",
+      apellido: "Cuenta",
+      email: "nueva@test.com",
+      password: "secreta1",
+    });
+
+    expect(user).toEqual({ id: 5, nombre: "Nueva", email: "nueva@test.com", rol: "usuario" });
+    expect(getOrCreateSessionStore().getSnapshot().status).toBe("authenticated");
+    // La única fuente del rol es ROL_USUARIO_ID (1) — nunca algo pasado por el caller.
+    expect(calls[0]?.body).toMatchObject({ rol_id: 1 });
+  });
+
+  it("email duplicado: NO crea sesión y propaga el detail real del backend (400)", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(jsonResponse({ detail: "El email ya está registrado" }, 400)),
+    );
+
+    await expect(
+      register({ nombre: "X", apellido: "Y", email: "dup@test.com", password: "secreta1" }),
+    ).rejects.toMatchObject({ name: "ApiError", status: 400, detail: "El email ya está registrado" });
 
     expect(getOrCreateSessionStore().getSnapshot().status).toBe("anonymous");
     expect(getOrCreateSessionStore().getSnapshot().token).toBeNull();

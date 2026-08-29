@@ -96,4 +96,13 @@ describe("LoginPage", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent(/credenciales inválidas/i);
     await waitFor(() => expect(screen.queryByText("Reservas Home")).not.toBeInTheDocument());
   });
+
+  it("link a /registro está presente", () => {
+    renderLoginPage();
+
+    expect(screen.getByRole("link", { name: /crear cuenta/i })).toHaveAttribute(
+      "href",
+      "/registro",
+    );
+  });
 });

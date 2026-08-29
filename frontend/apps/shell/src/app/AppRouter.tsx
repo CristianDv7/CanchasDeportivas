@@ -6,6 +6,7 @@ import type { ComponentType } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AccesoDenegadoPage } from "../auth/AccesoDenegadoPage";
 import { LoginPage } from "../auth/LoginPage";
+import { RegisterPage } from "../auth/RegisterPage";
 import { RequireAuth } from "../auth/RequireAuth";
 import { RequireRole } from "../auth/RequireRole";
 import { useSession } from "../session/useSession";
@@ -44,6 +45,15 @@ export function AppRouter({ remoteLoaders = {} }: { remoteLoaders?: AppRouterRem
         element={
           <RedirectIfAuthenticated>
             <LoginPage />
+          </RedirectIfAuthenticated>
+        }
+      />
+
+      <Route
+        path="/registro"
+        element={
+          <RedirectIfAuthenticated>
+            <RegisterPage />
           </RedirectIfAuthenticated>
         }
       />

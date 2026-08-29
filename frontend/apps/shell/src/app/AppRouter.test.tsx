@@ -72,4 +72,17 @@ describe("AppRouter", () => {
 
     expect(screen.getByRole("form", { name: /iniciar sesión/i })).toBeInTheDocument();
   });
+
+  it("/registro con sesión activa redirige a /reservas", async () => {
+    getOrCreateSessionStore().set({ user: usuario, token: "tok" });
+    renderAt("/registro");
+
+    expect(await screen.findByText("mf-reservas mounted")).toBeInTheDocument();
+  });
+
+  it("sin sesión, /registro muestra el formulario de alta", () => {
+    renderAt("/registro");
+
+    expect(screen.getByRole("form", { name: /crear cuenta/i })).toBeInTheDocument();
+  });
 });

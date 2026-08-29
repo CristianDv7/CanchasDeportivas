@@ -80,3 +80,10 @@
   padding: var(--space-2) var(--space-3);
   font-size: 0.85rem;
 }
+
+.shell-login-link {
+  margin-top: var(--space-2);
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--turf-text);
+}

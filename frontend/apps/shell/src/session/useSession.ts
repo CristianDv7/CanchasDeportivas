@@ -2,7 +2,7 @@
 // en vez de React Context, para que un remote pueda llamar useSession() desde
 // cualquier profundidad del árbol sin depender de un Provider del shell.
 import { useMemo, useSyncExternalStore } from "react";
-import { login, logout } from "./session";
+import { login, logout, register } from "./session";
 import { getOrCreateSessionStore } from "./store";
 import type { SessionSnapshot } from "./store";
 import { normalizeRol } from "./types";
@@ -27,6 +27,7 @@ function buildSession(snapshot: SessionSnapshot): Session {
     status: snapshot.status,
     error: snapshot.error,
     login,
+    register,
     logout,
     hasRole: buildHasRole(snapshot),
   };
