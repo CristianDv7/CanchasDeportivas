@@ -95,24 +95,27 @@ export default defineConfig({
   server: {
     port: 3000,
     host: "0.0.0.0",
-    //proxy: {
+    proxy: {
       // Same-origin: ningún ms-* registra CORSMiddleware (design.md ADR-01).
-      //"/api/usuarios": {
-        //target: MS_USUARIOS_URL,
-        //pathRewrite: { "^/api/usuarios": "" },
-      //},
-      //"/api/canchas": {
-        //target: MS_CANCHAS_URL,
-        //pathRewrite: { "^/api/canchas": "" },
-      //},
-      //"/api/reservas": {
-        //target: MS_RESERVAS_URL,
-        //pathRewrite: { "^/api/reservas": "" },
-      //},
-      //"/api/reportes": {
-        //target: MS_REPORTES_URL,
-        //pathRewrite: { "^/api/reportes": "" },
-      //},
-    //},
+      // Necesario para dev local sin Docker (microservicios sueltos en
+      // 8001-8004): en el flujo dockerizado, apigateway/nginx.conf hace este
+      // mismo ruteo — los dos proxies conviven, no se pisan.
+      "/api/usuarios": {
+        target: MS_USUARIOS_URL,
+        pathRewrite: { "^/api/usuarios": "" },
+      },
+      "/api/canchas": {
+        target: MS_CANCHAS_URL,
+        pathRewrite: { "^/api/canchas": "" },
+      },
+      "/api/reservas": {
+        target: MS_RESERVAS_URL,
+        pathRewrite: { "^/api/reservas": "" },
+      },
+      "/api/reportes": {
+        target: MS_REPORTES_URL,
+        pathRewrite: { "^/api/reportes": "" },
+      },
+    },
   },
 });
