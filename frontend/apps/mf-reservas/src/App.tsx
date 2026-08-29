@@ -6,6 +6,7 @@ import { Route, Routes } from "react-router-dom";
 import { DisponibilidadPage } from "./features/disponibilidad/DisponibilidadPage";
 import { MisReservasPage } from "./features/mis-reservas/MisReservasPage";
 import { NuevaReservaPage } from "./features/nueva-reserva/NuevaReservaPage";
+import "./styles/tokens.css";
 
 export default function App() {
   return (

@@ -5,8 +5,9 @@ node_modules/
 dist/
 .rsbuild/
 
-# Module Federation — tipos generados automáticamente en cada `pnpm dev`
+# Module Federation — tipos y diagnostics generados automáticamente en cada `pnpm dev`
 @mf-types/
+.mf/
 
 # Test coverage
 coverage/

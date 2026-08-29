@@ -1,0 +1,81 @@
+.mfr-reserva-form-vacio {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.mfr-reserva-form fieldset {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: var(--space-4);
+  margin: 0;
+}
+
+.mfr-reserva-form legend {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  padding: 0 var(--space-2);
+}
+
+.mfr-reserva-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-2);
+}
+
+.mfr-reserva-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.mfr-reserva-option:has(input:disabled) {
+  color: var(--ink-muted);
+  cursor: not-allowed;
+  background: var(--bg);
+  text-decoration: line-through;
+}
+
+.mfr-reserva-option:has(input:checked) {
+  border-color: var(--turf);
+  background: var(--turf-soft);
+  color: var(--turf-text);
+}
+
+.mfr-reserva-submit {
+  margin-top: var(--space-4);
+  background: var(--turf-text);
+  color: var(--surface);
+  border: none;
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-6);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+
+.mfr-reserva-submit:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.mfr-reserva-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

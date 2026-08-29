@@ -22,14 +22,16 @@ export interface CanchaRaw {
   updated_at: string;
 }
 
-export interface BloqueRaw {
+// Shape real de GET /horarios-atencion (ms-canchas, sin auth). Reemplaza el
+// contrato PROPUESTO `DisponibilidadRaw`/`BloqueRaw` (grilla ya armada) que
+// nunca implementó el backend: ahora el frontend arma la grilla combinando
+// esto con `GET /reservas/disponibilidad` (ver `buildDisponibilidad` en
+// mappers.ts).
+export interface HorarioAtencionRaw {
+  id: number;
+  cancha_id: number;
+  dia_semana: number; // ISO 1-7 (1=lunes)
   hora_inicio: string;
   hora_fin: string;
-  estado: string;
-}
-
-export interface DisponibilidadRaw {
-  cancha_id: number;
-  fecha: string;
-  bloques: BloqueRaw[];
+  activo: boolean;
 }

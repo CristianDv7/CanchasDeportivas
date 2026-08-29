@@ -1,0 +1,111 @@
+/*
+ * Token system visual — cancha de pádel/tenis/básquet, look de scoreboard.
+ * Duplicado IDÉNTICO en las 4 apps (shell + 3 remotes MF): cada app de
+ * Module Federation compila por separado, no hay CSS compartido vía
+ * federación en este proyecto (ver design.md §5.3, mismo criterio que
+ * `shared` de rsbuild.config.ts: "copiar textual, no divergir").
+ *
+ * SOLO visual — ningún selector de acá condiciona lógica de negocio.
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+
+:root {
+  /* Paleta (6 tokens con nombre) */
+  --bg: #f5f6f3; /* blanco cálido-frío */
+  --ink: #12221d; /* texto principal, verde-negro oscuro */
+  --turf: #1e8a5f; /* verde cancha de pádel — acento/signature */
+  --clay: #c1502e; /* terracota — SOLO ocupado/cancelar/error */
+  --line: #d8d4cc; /* bordes, divisores, hairlines */
+  --surface: #ffffff; /* cards / superficies elevadas */
+
+  /* Derivados de la paleta base, no nuevos colores de marca */
+  --turf-soft: #e3f2ea;
+  --clay-soft: #f6e6e0;
+  --ink-muted: #55655f;
+  /* Variantes oscurecidas de --turf/--clay para TEXTO (WCAG AA 4.5:1):
+     --turf y --clay a secas rinden ~4:1 sobre --bg/--surface, suficiente
+     para bordes/fondos/dots (umbral 3:1 de contenido no-textual) pero no
+     para texto de tamaño normal. Auditoría Web Interface Guidelines
+     (paso 5 del proceso de diseño). */
+  --turf-text: #146245;
+  --clay-text: #96391a;
+
+  /* Tipografía */
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Espaciado / radios / motion — disciplinado, no decorativo */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --radius: 6px;
+  --transition: 160ms ease;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  margin: 0;
+  color: var(--ink);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--turf-text);
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Foco de teclado visible en TODA la superficie de las 4 apps (Web
+   Interface Guidelines: nunca `outline: none` sin reemplazo). */
+:focus-visible {
+  outline: 2px solid var(--turf);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Web Interface Guidelines: honrar prefers-reduced-motion. Las transiciones
+   de esta app ya son solo color/opacidad (150-200ms, sin nada decorativo),
+   pero igual se apagan por completo si el usuario lo pidió. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

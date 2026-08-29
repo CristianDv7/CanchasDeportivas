@@ -1,0 +1,40 @@
+.shell-remote-error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background: var(--clay-soft);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--clay);
+  border-radius: var(--radius);
+}
+
+.shell-remote-error p {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.shell-remote-retry {
+  background: var(--surface);
+  border: 1px solid var(--clay);
+  color: var(--clay);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.shell-remote-retry:hover {
+  background: var(--clay);
+  color: var(--surface);
+}
+
+.shell-remote-loading {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: var(--space-6) 0;
+}

@@ -4,6 +4,7 @@
 // componente no necesita tocarse.
 import { estadoBadge } from "../domain/rules";
 import type { EstadoReserva } from "../api/dto";
+import "./EstadoBadge.css";
 
 export interface EstadoBadgeProps {
   readonly estado: EstadoReserva | null;
@@ -13,7 +14,7 @@ export function EstadoBadge({ estado }: EstadoBadgeProps) {
   const { label, tone } = estadoBadge(estado);
 
   return (
-    <span data-testid="estado-badge" data-tone={tone}>
+    <span data-testid="estado-badge" data-tone={tone} className="mfr-badge">
       {label}
     </span>
   );

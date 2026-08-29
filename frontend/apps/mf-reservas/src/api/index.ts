@@ -8,6 +8,7 @@ export type {
   BloqueDisponibilidad,
   EstadoBloque,
   EstadoReserva,
+  HorarioAtencion,
   IsoDate,
   IsoTime,
   NuevaReservaInput,

@@ -12,6 +12,7 @@ import { ErrorBanner } from "../../components/ErrorBanner";
 import { useAction } from "../../hooks/useAction";
 import { useResource } from "../../hooks/useResource";
 import { ReservaRow } from "./ReservaRow";
+import "./MisReservasPage.css";
 
 export function MisReservasPage() {
   const misReservas = useResource(reservasApi.listMias, []);
@@ -26,7 +27,7 @@ export function MisReservasPage() {
 
   return (
     <section>
-      <h2>Mis reservas</h2>
+      <h2 className="mfr-page-title">Mis reservas</h2>
 
       {misReservas.error && (
         <ErrorBanner error={misReservas.error} onRetry={misReservas.refetch} />
@@ -35,11 +36,13 @@ export function MisReservasPage() {
       {cancelarReserva.error && <ErrorBanner error={cancelarReserva.error} />}
 
       {misReservas.data && misReservas.data.length === 0 && (
-        <p data-testid="mis-reservas-vacio">Todavía no tenés reservas.</p>
+        <p data-testid="mis-reservas-vacio" className="mfr-reservas-vacio">
+          Todavía no tenés reservas.
+        </p>
       )}
 
       {misReservas.data && misReservas.data.length > 0 && (
-        <ul>
+        <ul className="mfr-reservas-list">
           {misReservas.data.map((reserva) => (
             <ReservaRow
               key={reserva.id}

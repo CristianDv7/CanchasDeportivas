@@ -17,6 +17,7 @@ import { useResource } from "../../hooks/useResource";
 import { CanchaFechaPicker } from "../disponibilidad/CanchaFechaPicker";
 import { useDisponibilidad } from "../disponibilidad/useDisponibilidad";
 import { ReservaForm } from "./ReservaForm";
+import "./NuevaReservaPage.css";
 
 export function NuevaReservaPage() {
   const session = useSession();
@@ -96,7 +97,7 @@ export function NuevaReservaPage() {
 
   return (
     <section>
-      <h2>Nueva reserva</h2>
+      <h2 className="mfr-page-title">Nueva reserva</h2>
 
       {canchas.error && <ErrorBanner error={canchas.error} onRetry={canchas.refetch} />}
 
@@ -109,7 +110,7 @@ export function NuevaReservaPage() {
       />
 
       {misReservas.data && (
-        <p data-testid="contador-rn06">
+        <p data-testid="contador-rn06" className="mfr-contador-rn06">
           Reservas activas: {contarActivas(misReservas.data)}
         </p>
       )}
@@ -121,7 +122,7 @@ export function NuevaReservaPage() {
       {crearReserva.error && <ErrorBanner error={crearReserva.error} />}
 
       {exito && (
-        <p role="status" data-testid="reserva-exito">
+        <p role="status" data-testid="reserva-exito" className="mfr-reserva-exito">
           Reserva confirmada.
         </p>
       )}

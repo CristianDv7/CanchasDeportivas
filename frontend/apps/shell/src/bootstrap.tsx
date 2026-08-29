@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { AppRouter } from "./app/AppRouter";
 import { getOrCreateSessionStore } from "./session/store";
+import "./styles/tokens.css";
 
 const container = document.getElementById("root");
 

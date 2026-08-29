@@ -4,6 +4,7 @@
 // `mapApiError`); este componente es puro renderizado condicionado por
 // `action`. Mismo patrón `role="alert"` que `RemoteBoundary`/`LoginPage` del shell.
 import type { UiError } from "../api/errors";
+import "./ErrorBanner.css";
 
 export interface ErrorBannerProps {
   readonly error: UiError;
@@ -13,10 +14,10 @@ export interface ErrorBannerProps {
 
 export function ErrorBanner({ error, onRetry }: ErrorBannerProps) {
   return (
-    <div role="alert">
+    <div role="alert" className="mfr-error-banner">
       <p>{error.message}</p>
       {error.action === "retry" && (
-        <button type="button" onClick={onRetry}>
+        <button type="button" className="mfr-error-retry" onClick={onRetry}>
           Reintentar
         </button>
       )}

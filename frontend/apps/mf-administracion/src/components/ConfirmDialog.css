@@ -1,0 +1,57 @@
+.mfa-confirm-dialog {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 40%);
+  z-index: 100;
+}
+
+.mfa-confirm-dialog-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  max-width: 28rem;
+  width: 100%;
+}
+
+.mfa-confirm-dialog-title {
+  margin-bottom: var(--space-3);
+}
+
+.mfa-confirm-dialog-mensaje {
+  color: var(--ink);
+  font-size: 0.9rem;
+  margin-bottom: var(--space-4);
+}
+
+.mfa-confirm-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.mfa-confirm-dialog-cancelar {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+}
+
+.mfa-confirm-dialog-confirmar {
+  background: var(--clay);
+  color: var(--surface);
+  border: none;
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mfa-confirm-dialog-confirmar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

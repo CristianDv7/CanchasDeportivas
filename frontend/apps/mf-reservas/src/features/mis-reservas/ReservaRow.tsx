@@ -8,6 +8,7 @@
 import type { Reserva } from "../../api";
 import { EstadoBadge } from "../../components/EstadoBadge";
 import { canCancel } from "../../domain/rules";
+import "./ReservaRow.css";
 
 export interface ReservaRowProps {
   readonly reserva: Reserva;
@@ -19,12 +20,17 @@ export function ReservaRow({ reserva, pending, onCancelar }: ReservaRowProps) {
   const habilitado = canCancel(reserva) && !pending;
 
   return (
-    <li data-testid="reserva-row">
-      <span>
+    <li data-testid="reserva-row" className="mfr-reserva-row">
+      <span className="mfr-reserva-row-fecha">
         {reserva.fecha} {reserva.horaInicio.slice(0, 5)}–{reserva.horaFin.slice(0, 5)}
       </span>
       <EstadoBadge estado={reserva.estado} />
-      <button type="button" disabled={!habilitado} onClick={() => onCancelar(reserva.id)}>
+      <button
+        type="button"
+        className="mfr-reserva-cancelar"
+        disabled={!habilitado}
+        onClick={() => onCancelar(reserva.id)}
+      >
         Cancelar
       </button>
     </li>

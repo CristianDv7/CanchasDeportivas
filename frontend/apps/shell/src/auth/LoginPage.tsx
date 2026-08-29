@@ -2,6 +2,7 @@
 import { useState, type FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSession } from "../session/useSession";
+import "./LoginPage.css";
 
 interface LocationState {
   from?: { pathname: string };
@@ -30,35 +31,46 @@ export function LoginPage() {
   }
 
   return (
-    <form onSubmit={handleSubmit} aria-label="Iniciar sesión">
-      <h1>Iniciar sesión</h1>
-      <label htmlFor="login-email">Email</label>
-      <input
-        id="login-email"
-        name="email"
-        type="email"
-        autoComplete="username"
-        value={email}
-        onChange={(event) => setEmail(event.target.value)}
-        required
-      />
+    <div className="shell-login-screen">
+      <form onSubmit={handleSubmit} aria-label="Iniciar sesión" className="shell-login-card">
+        <h1 className="shell-login-title">Iniciar sesión</h1>
 
-      <label htmlFor="login-password">Contraseña</label>
-      <input
-        id="login-password"
-        name="password"
-        type="password"
-        autoComplete="current-password"
-        value={password}
-        onChange={(event) => setPassword(event.target.value)}
-        required
-      />
+        <div className="shell-login-field">
+          <label htmlFor="login-email">Email</label>
+          <input
+            id="login-email"
+            name="email"
+            type="email"
+            autoComplete="username"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+          />
+        </div>
 
-      <button type="submit" disabled={status === "authenticating"}>
-        Ingresar
-      </button>
+        <div className="shell-login-field">
+          <label htmlFor="login-password">Contraseña</label>
+          <input
+            id="login-password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            required
+          />
+        </div>
 
-      {formError && <p role="alert">{formError}</p>}
-    </form>
+        <button type="submit" className="shell-login-submit" disabled={status === "authenticating"}>
+          Ingresar
+        </button>
+
+        {formError && (
+          <p role="alert" className="shell-login-error">
+            {formError}
+          </p>
+        )}
+      </form>
+    </div>
   );
 }

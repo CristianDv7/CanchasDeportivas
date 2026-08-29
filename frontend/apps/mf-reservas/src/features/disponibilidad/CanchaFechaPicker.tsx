@@ -2,6 +2,7 @@
 // controlado: no guarda estado propio, delega en `DisponibilidadPage`
 // (design.md §7).
 import type { Cancha, IsoDate } from "../../api";
+import "./CanchaFechaPicker.css";
 
 export interface CanchaFechaPickerProps {
   readonly canchas: readonly Cancha[];
@@ -19,32 +20,36 @@ export function CanchaFechaPicker({
   onFechaChange,
 }: CanchaFechaPickerProps) {
   return (
-    <div>
-      <label htmlFor="disponibilidad-cancha">Cancha</label>
-      <select
-        id="disponibilidad-cancha"
-        data-testid="cancha-select"
-        value={canchaId ?? ""}
-        onChange={(event) => onCanchaChange(Number(event.target.value))}
-      >
-        <option value="" disabled>
-          Elegí una cancha
-        </option>
-        {canchas.map((cancha) => (
-          <option key={cancha.id} value={cancha.id}>
-            {cancha.nombre}
+    <div className="mfr-picker">
+      <div className="mfr-picker-field">
+        <label htmlFor="disponibilidad-cancha">Cancha</label>
+        <select
+          id="disponibilidad-cancha"
+          data-testid="cancha-select"
+          value={canchaId ?? ""}
+          onChange={(event) => onCanchaChange(Number(event.target.value))}
+        >
+          <option value="" disabled>
+            Elegí una cancha
           </option>
-        ))}
-      </select>
+          {canchas.map((cancha) => (
+            <option key={cancha.id} value={cancha.id}>
+              {cancha.nombre}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      <label htmlFor="disponibilidad-fecha">Fecha</label>
-      <input
-        id="disponibilidad-fecha"
-        type="date"
-        data-testid="fecha-input"
-        value={fecha ?? ""}
-        onChange={(event) => onFechaChange(event.target.value)}
-      />
+      <div className="mfr-picker-field">
+        <label htmlFor="disponibilidad-fecha">Fecha</label>
+        <input
+          id="disponibilidad-fecha"
+          type="date"
+          data-testid="fecha-input"
+          value={fecha ?? ""}
+          onChange={(event) => onFechaChange(event.target.value)}
+        />
+      </div>
     </div>
   );
 }

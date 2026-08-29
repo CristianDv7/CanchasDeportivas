@@ -1,0 +1,38 @@
+.shell-notfound-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+}
+
+.shell-notfound-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.shell-notfound-code::before {
+  content: "404";
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 3rem;
+  font-weight: 600;
+  color: var(--turf);
+  letter-spacing: 0.02em;
+}
+
+.shell-notfound-card p {
+  color: var(--ink-muted);
+}
+
+.shell-notfound-card a {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.shell-notfound-card a:hover {
+  text-decoration: underline;
+}
