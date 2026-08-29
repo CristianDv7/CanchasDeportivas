@@ -1,0 +1,73 @@
+# openspec/config.yaml
+schema: spec-driven
+
+context: |
+  Monorepo CanchasDeportivas. Este proyecto (frontend/) usa React 18 +
+  Module Federation (Webpack 5 / Rsbuild). Backend (FastAPI, propiedad de
+  Cristian) y API Gateway (propiedad de Wilson Cabrera) son consumidos vía
+  HTTP, no se tocan desde acá. Ver CLAUDE.md para roles y estado completo.
+
+strict_tdd: true
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Identify affected modules/packages within frontend/ only
+  specs:
+    - Use Given/When/Then format for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Include sequence diagrams for complex flows (Module Federation loading, auth)
+    - Document architecture decisions with rationale
+  tasks:
+    - Group tasks by phase (infrastructure, implementation, testing)
+    - Use hierarchical numbering (1.1, 1.2, etc.)
+    - Keep tasks small enough to complete in one session
+  apply:
+    guidelines:
+      - Follow existing code patterns and conventions
+    tdd: true
+    # Ejecutar desde frontend/. Corre Vitest en las 4 apps del workspace pnpm.
+    test_command: "pnpm -r test"
+  verify:
+    test_command: "pnpm -r test"
+    build_command: "pnpm -r build"
+    # Sin reporte de cobertura configurado (coverage: false). Cualquier umbral
+    # > 0 sería una promesa que hoy nada mide.
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas (large removals)
+
+testing:
+  strict_tdd_mode: true
+  backend:
+    test_runner: pytest
+    unit: true
+    integration: true
+    e2e: false
+    coverage: false
+    quality_tools: none
+  frontend:
+    status: scaffolded
+    test_runner: vitest
+    libs:
+      - "@testing-library/react"
+      - "@testing-library/jest-dom"
+      - "@testing-library/user-event"
+      - jsdom
+    unit: true
+    integration: true
+    e2e: false
+    coverage: false
+    quality_tools: none
+    test_command: "pnpm -r test"
+    build_command: "pnpm -r build"
+    apps: [shell, mf-reservas, mf-administracion, mf-reportes]
+    note: |
+      Scaffoldeado y probado end-to-end en el change frontend-shell (Fase 4).
+      83 tests verdes en 14 archivos (shell 65, cada remote 6). Correr desde
+      frontend/. Sin E2E: el único escenario de spec que lo requiere de verdad
+      es "Single React instance across host and remotes" (frontend-shell-host),
+      no testeable bajo jsdom porque necesita el runtime real de Module
+      Federation; hoy está validado manualmente. Es el candidato #1 si se suma
+      Playwright.
