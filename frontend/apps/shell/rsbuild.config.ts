@@ -94,24 +94,25 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    proxy: {
+    host: "0.0.0.0",
+    //proxy: {
       // Same-origin: ningún ms-* registra CORSMiddleware (design.md ADR-01).
-      "/api/usuarios": {
-        target: MS_USUARIOS_URL,
-        pathRewrite: { "^/api/usuarios": "" },
-      },
-      "/api/canchas": {
-        target: MS_CANCHAS_URL,
-        pathRewrite: { "^/api/canchas": "" },
-      },
-      "/api/reservas": {
-        target: MS_RESERVAS_URL,
-        pathRewrite: { "^/api/reservas": "" },
-      },
-      "/api/reportes": {
-        target: MS_REPORTES_URL,
-        pathRewrite: { "^/api/reportes": "" },
-      },
-    },
+      //"/api/usuarios": {
+        //target: MS_USUARIOS_URL,
+        //pathRewrite: { "^/api/usuarios": "" },
+      //},
+      //"/api/canchas": {
+        //target: MS_CANCHAS_URL,
+        //pathRewrite: { "^/api/canchas": "" },
+      //},
+      //"/api/reservas": {
+        //target: MS_RESERVAS_URL,
+        //pathRewrite: { "^/api/reservas": "" },
+      //},
+      //"/api/reportes": {
+        //target: MS_REPORTES_URL,
+        //pathRewrite: { "^/api/reportes": "" },
+      //},
+    //},
   },
 });
