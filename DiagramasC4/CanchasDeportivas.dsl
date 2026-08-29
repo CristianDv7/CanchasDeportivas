@@ -1,11 +1,16 @@
-# NOTA (Brando, verificado contra el código real de backend/ el 2026-08-28):
+# NOTA (Brando, verificado contra el código real de backend/ el 2026-08-28,
+# confirmado como decisión de diseño el 2026-08-29):
 # el modelo de contenedores de abajo dibuja dbUsers/dbCourts/dbReservations
 # como 3 bases de datos separadas. En el código real (backend/docker-compose.yml
 # + backend/database/init/01-create-schemas.sql) hay UNA sola instancia
 # Postgres ("backend-postgres", puerto 5433, DB "backend") con 3 schemas
-# lógicos (usuarios/canchas/reservas), no 3 instancias. No se corrige acá para
-# no alterar un diagrama ya compartido con el equipo sin acuerdo — queda
-# como hallazgo para decidir si se ajusta el diagrama de contenedores.
+# lógicos (usuarios/canchas/reservas), no 3 instancias — decisión documentada
+# como ADR-01 (Backend) en el informe arquitectónico. Esto NO es una
+# inconsistencia del diagrama: a nivel C4 Contenedores (Nivel 2) se modela la
+# separación lógica de ownership de datos por dominio (cada ms-* dueño de su
+# store), independiente del detalle de implementación física (schema vs.
+# instancia), que pertenece a un nivel de abstracción más bajo. Se mantiene
+# así a propósito.
 # ms-reportes no tiene base de datos propia: es un agregador puro que
 # consulta ms-canchas y ms-reservas vía HTTP.
 
