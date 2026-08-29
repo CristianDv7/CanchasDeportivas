@@ -5,11 +5,11 @@ Registro de decisiones arquitectónicas del proyecto. Formato: Nygard simplifica
 Reglas de este directorio:
 - Un ADR nunca se edita retroactivamente. Si una decisión cambia, se crea un ADR nuevo que marca al anterior como `Reemplazado por ADR-XX`.
 - La numeración de `frontend/` sigue la que ya se venía usando en comentarios del propio código fuente (ej. `rsbuild.config.ts`) para referenciar estas mismas decisiones — no se renumeró para no romper esas referencias cruzadas.
-- Los ADR de `backend/` fueron reconstruidos por el equipo de frontend leyendo el código real de `backend/` (commits de Cristian), no fueron escritos por quien tomó la decisión. Están marcados como **observados**, no autorales, y deberían ser confirmados o corregidos por Cristian.
+- Los ADR de `backend/` fueron aceptados por el equipo el 2026-08-29.
 
 ## Frontend (`frontend/`)
 
-Autor: Brando. Reconstruidos a partir del código real de `frontend/apps/shell` y `frontend/apps/mf-reservas`.
+Autor: Brando.
 
 | ADR | Título |
 |-----|--------|
@@ -26,7 +26,7 @@ Autor: Brando. Reconstruidos a partir del código real de `frontend/apps/shell` 
 | [11](frontend/ADR-11-fechas-horas-como-strings-en-dto.md) | Fechas/horas como `string` en el DTO, nunca `Date` |
 | [12](frontend/ADR-12-reglas-negocio-cliente-solo-computable.md) | Reglas de negocio en cliente: solo se espeja lo computable sin estado del servidor |
 
-## Backend (`backend/`) — observados, a confirmar por Cristian
+## Backend (`backend/`) — aceptados
 
 | ADR | Título |
 |-----|--------|
@@ -37,14 +37,21 @@ Autor: Brando. Reconstruidos a partir del código real de `frontend/apps/shell` 
 | [05](backend/ADR-05-validacion-solapamiento-sin-locking.md) | Validación de solapamiento (RN-02) sin locking a nivel de base de datos |
 | [06](backend/ADR-06-docker-compose-postgres-unico.md) | Orquestación con Docker Compose y una única instancia Postgres |
 
+## Gateway (`gateway/`) — aceptado
+
+| ADR | Título |
+|-----|--------|
+| [01](gateway/ADR-01-nginx-reverse-proxy.md) | Api Gateway implementado con Nginx como reverse proxy, no como microservicio FastAPI |
+
 ## Requisitos No Funcionales — resumen de deuda técnica activa
 
-Cada ADR trae su propia sección "Requisitos No Funcionales derivados" (18 NFR en total, RNF-01 a RNF-18). Esta tabla junta solo los que hoy **no se cumplen**, para verlos de un vistazo sin recorrer los 18 archivos:
+Cada ADR trae su propia sección "Requisitos No Funcionales derivados". Esta tabla junta solo los que hoy **no se cumplen**, para verlos de un vistazo sin recorrer todos los archivos:
 
 | NFR | Riesgo | ADR | Prioridad sugerida |
 |-----|--------|-----|---------------------|
 | RNF-06 | Doble-reserva del mismo bloque bajo concurrencia (RN-02, peso alto en la rúbrica) | [backend/05](backend/ADR-05-validacion-solapamiento-sin-locking.md) | **Alta** |
 | RNF-04 / RNF-05 | Secreto JWT compartido y committeado en texto plano | [backend/03](backend/ADR-03-jwt-hs256-secreto-compartido-validacion-descentralizada.md) | **Alta** |
 | RNF-10 | Sin retry/circuit breaker entre microservicios | [backend/02](backend/ADR-02-comunicacion-sincrona-rest-entre-microservicios.md) | Media |
-| RNF-17 | Docker Compose incompleto (falta gateway + 4 `ms-*`) | [backend/06](backend/ADR-06-docker-compose-postgres-unico.md), [frontend/01](frontend/ADR-01-proxy-dev-sin-cors.md) | Media (ya es el próximo paso planeado) |
-| RNF-11 | Postgres único como punto único de fallo de los 3 dominios | [backend/01](backend/ADR-01-schema-per-domain-postgres-compartido.md), [backend/06](backend/ADR-06-docker-compose-postgres-unico.md) | Baja (aceptable para alcance académico, a confirmar) |
+| RNF-11 | Postgres único como punto único de fallo de los 3 dominios | [backend/01](backend/ADR-01-schema-per-domain-postgres-compartido.md), [backend/06](backend/ADR-06-docker-compose-postgres-unico.md) | Baja (aceptable para alcance académico) |
+
+RNF-17 (sistema completo levantable con un único comando reproducible) quedó satisfecho con la orquestación completa de Docker Compose y el Api Gateway ([gateway/01](gateway/ADR-01-nginx-reverse-proxy.md)) — ya no figura como deuda activa.

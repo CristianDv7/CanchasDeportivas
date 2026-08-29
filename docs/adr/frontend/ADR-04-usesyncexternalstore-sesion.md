@@ -1,7 +1,6 @@
 # ADR-04: `useSyncExternalStore` para la sesión, no React Context
 
 **Estado:** Aceptado — 2026-08-26
-**Evidencia en código:** `frontend/apps/shell/src/session/useSession.ts` — usa `useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot)`; no existe ningún `SessionContext` en el codebase.
 
 ## Contexto
 

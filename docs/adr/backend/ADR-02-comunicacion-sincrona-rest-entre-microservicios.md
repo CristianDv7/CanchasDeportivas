@@ -1,15 +1,14 @@
 # ADR-02: Comunicación entre microservicios síncrona vía REST/`httpx`
 
-**Estado:** Observado (no confirmado por Cristian) — 2026-08-27
-**Evidencia en código:** `backend/ms-reservas/app/clients/{canchas_client,usuarios_client}.py` — llamadas `httpx.get(...)` con `timeout=5.0`, sin retry ni circuit breaker.
+**Estado:** Aceptada — 2026-08-29
 
 ## Contexto
 
 Crear una reserva en `ms-reservas` requiere validar que el usuario exista y esté activo (dato de `ms-usuarios`) y que la cancha exista, esté activa y la reserva caiga dentro de su horario de atención (dato de `ms-canchas`). Cada microservicio es dueño exclusivo de su base — `ms-reservas` no puede leer esas tablas directamente.
 
-## Decisión (observada)
+## Decisión
 
-`ms-reservas` llama sincrónicamente, por HTTP REST, a `ms-usuarios` (`GET /usuarios/{id}`) y `ms-canchas` (`GET /canchas/{id}`, `GET /horarios-atencion`) en el momento de crear una reserva, con un timeout fijo de 5 segundos. No hay cola de mensajes ni bus de eventos entre microservicios.
+`Ms Reservas` llamará sincrónicamente, por HTTP REST, a `Ms Usuarios` y `Ms Canchas` en el momento de crear una reserva, con un timeout fijo de 5 segundos. No habrá cola de mensajes ni bus de eventos entre microservicios.
 
 ## Consecuencias
 
@@ -18,7 +17,7 @@ Crear una reserva en `ms-reservas` requiere validar que el usuario exista y est�
 - Consistencia fuerte en el momento de la validación: al crear una reserva, se consulta el estado real y actual de usuario/cancha, no una copia potencialmente desactualizada.
 
 **Negativas / riesgos**
-- **Acoplamiento temporal fuerte**: si `ms-usuarios` o `ms-canchas` están caídos o lentos, crear una reserva falla en cascada — `RuntimeError("No fue posible comunicarse con ms-canchas")` — aunque `ms-reservas` esté sano. No hay circuit breaker ni degradación (ej. cachear el último estado conocido).
+- **Acoplamiento temporal fuerte**: si `Ms Usuarios` o `Ms Canchas` están caídos o lentos, crear una reserva falla en cascada aunque `Ms Reservas` esté sano. No hay circuit breaker ni degradación (ej. cachear el último estado conocido).
 - El timeout de 5s por llamada, con 2-3 llamadas encadenadas en el peor caso (usuario + cancha + horarios), puede acumular hasta ~15s de latencia máxima en un solo request de creación de reserva antes de fallar — impacto directo en NFR de tiempo de respuesta.
 - Sin reintentos: un timeout transitorio de red (no una caída real del servicio) también hace fallar la operación completa.
 

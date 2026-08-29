@@ -1,7 +1,6 @@
 # ADR-03: `authorizeRequest(init)` como costura, en vez de exponer `getToken()`
 
 **Estado:** Aceptado — 2026-08-26
-**Evidencia en código:** `frontend/apps/shell/src/session/store.ts` (`authorizeRequest`) — sin ningún `getToken()` expuesto en el resto del codebase.
 
 ## Contexto
 

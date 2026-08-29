@@ -1,7 +1,6 @@
 # ADR-10: Fetching propio (`useResource`/`useAction`), sin TanStack Query ni caché compartida
 
 **Estado:** Aceptado — 2026-08-27
-**Evidencia en código:** `frontend/apps/mf-reservas/src/hooks/{useResource,useAction}.ts` — sin dependencia de TanStack Query ni de ninguna librería de fetching en `package.json`.
 
 ## Contexto
 

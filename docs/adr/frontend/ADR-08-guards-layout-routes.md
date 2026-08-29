@@ -1,7 +1,6 @@
 # ADR-08: Guards de ruta como layout routes con `<Outlet/>`
 
 **Estado:** Aceptado — 2026-08-26
-**Evidencia en código:** `frontend/apps/shell/src/auth/RequireAuth.tsx`, `RequireRole.tsx`, uso en `AppRouter.tsx` como `<Route element={...}>` envolviendo hijos.
 
 ## Contexto
 

@@ -1,7 +1,6 @@
 # ADR-07: 401 limpia la sesión, 403 no
 
 **Estado:** Aceptado — 2026-08-26
-**Evidencia en código:** `frontend/apps/shell/src/http/client.ts` y `client.test.ts` (tests 401/403).
 
 ## Contexto
 

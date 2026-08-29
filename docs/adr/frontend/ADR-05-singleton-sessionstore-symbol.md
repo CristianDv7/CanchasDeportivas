@@ -1,11 +1,10 @@
 # ADR-05: Singleton de `SessionStore` vía `Symbol.for` global
 
 **Estado:** Aceptado — 2026-08-26
-**Evidencia en código:** `frontend/apps/shell/src/session/store.ts` (`getOrCreateSessionStore()`, `Symbol.for('canchasdeportivas.session.store.v1')`).
 
 ## Contexto
 
-Module Federation con `shareStrategy: "loaded-first"` (ver comentario en `rsbuild.config.ts`) resuelve remotes bajo demanda. Existe riesgo de que, bajo ciertos escenarios de carga (HMR, remounts, o un remote que también empaqueta su propia copia del módulo de sesión por error), terminen conviviendo dos instancias del `SessionStore` — y entonces "iniciar sesión" en una y "leer sesión" en la otra ven estados distintos.
+Module Federation resuelve remotes bajo demanda. Existe riesgo de que, bajo ciertos escenarios de carga (HMR, remounts, o un remote que también empaqueta su propia copia del módulo de sesión por error), terminen conviviendo dos instancias del `SessionStore` — y entonces "iniciar sesión" en una y "leer sesión" en la otra ven estados distintos.
 
 ## Decisión
 
@@ -14,8 +13,7 @@ Module Federation con `shareStrategy: "loaded-first"` (ver comentario en `rsbuil
 ## Consecuencias
 
 **Positivas**
-- Defensa activa contra duplicación de instancias de MF: neutraliza el riesgo de que `shareStrategy: "loaded-first"` deje convivir dos instancias del store.
-- Verificado en vivo en el browser (misma referencia de objeto en consola), no solo por test.
+- Defensa activa contra duplicación de instancias de Module Federation: neutraliza el riesgo de que la estrategia de carga de remotes deje convivir dos instancias del store.
 
 **Negativas / riesgos**
 - Usar `globalThis` como mecanismo de singleton es un patrón que puede sorprender a alguien que no conozca la razón (por eso queda documentado acá). Si en el futuro se necesitan sesiones múltiples/aisladas en una misma página (ej. multi-tenant), este patrón hay que revisitarlo.
@@ -27,4 +25,4 @@ El singleton vía `Symbol.for` sobre `globalThis` garantiza una única instancia
 
 ## Alternativas consideradas
 
-- Confiar únicamente en `singleton: true` de MF para `react`/`react-dom`: insuficiente, porque no cubre módulos propios del shell como `session/store.ts` — `shared` en MF solo dedupe paquetes declarados explícitamente, no todo el grafo de módulos expuestos.
+- Confiar únicamente en el mecanismo de singleton de Module Federation para `react`/`react-dom`: insuficiente, porque no cubre módulos propios del shell como el store de sesión — ese mecanismo solo dedupe paquetes declarados explícitamente, no todo el grafo de módulos expuestos.

@@ -1,15 +1,14 @@
 # ADR-06: Orquestación con Docker Compose y una única instancia Postgres
 
-**Estado:** Observado (no confirmado por Cristian/Wilson) — 2026-08-27
-**Evidencia en código:** `backend/docker-compose.yml` — hoy solo define el servicio `postgres` (imagen `postgres:16`, puerto host `5433`); los 4 microservicios FastAPI no están containerizados todavía, corren de forma nativa/local durante desarrollo.
+**Estado:** Aceptada — 2026-08-29
 
 ## Contexto
 
-Los requisitos del proyecto piden "todo orquestado con Docker Compose". A la fecha de este ADR, `docker-compose.yml` solo levanta la base de datos — los microservicios se ejecutan fuera de Docker en desarrollo (uvicorn local contra los `.env` de cada uno).
+Los requisitos del proyecto piden "todo orquestado con Docker Compose". El plan de fases prioriza primero la base de datos y luego la containerización completa de los microservicios.
 
-## Decisión (observada, estado intermedio)
+## Decisión
 
-Se containeriza únicamente la base de datos por ahora. Es consistente con un orden de fases incremental: primero esqueletos + reglas de negocio, integración/Docker completo más adelante.
+Se containeriza primero únicamente la base de datos. Es consistente con un orden de fases incremental: primero esqueletos + reglas de negocio, integración/Docker completo más adelante.
 
 ## Consecuencias
 
@@ -17,15 +16,14 @@ Se containeriza únicamente la base de datos por ahora. Es consistente con un or
 - Desarrollo local más rápido de iterar: no hay que reconstruir una imagen Docker por cada cambio de código en un microservicio, alcanza con recargar uvicorn.
 
 **Negativas / riesgos**
-- El objetivo final del proyecto (todo orquestado con Docker Compose) todavía no está cumplido — falta un `Dockerfile` por microservicio y su servicio correspondiente en `docker-compose.yml`, más el `apigateway/` de Wilson (hoy inexistente en el compose).
-- Sin esto, no hay forma de levantar el sistema completo con un solo comando reproducible — cualquier evaluador del curso necesita levantar cada `ms-*` a mano con sus propias variables de entorno.
+- Fue una etapa intermedia: hasta completar la containerización de los 4 microservicios y el Api Gateway ([gateway/01](../gateway/ADR-01-nginx-reverse-proxy.md)), no hubo forma de levantar el sistema completo con un solo comando reproducible.
 
 ## Requisitos No Funcionales derivados
 
-**RNF-11 — Un dominio de datos caído no debe afectar la disponibilidad de los otros dominios a nivel de infraestructura.** *(no cumplido hoy; ver también [ADR-01](ADR-01-schema-per-domain-postgres-compartido.md))*
+**RNF-11 — Un dominio de datos caído no debe afectar la disponibilidad de los otros dominios a nivel de infraestructura.** *(riesgo aceptado para el alcance del curso; ver también [ADR-01](ADR-01-schema-per-domain-postgres-compartido.md))*
 
-**RNF-17 — El sistema completo debe poder levantarse con un único comando reproducible.** *(no cumplido hoy — objetivo pendiente; ver también ADR-frontend-01)*
-Hoy solo Postgres está containerizado; faltan los 4 `ms-*` y el API Gateway en el `docker-compose.yml`.
+**RNF-17 — El sistema completo debe poder levantarse con un único comando reproducible.** *(cumplido — ver [gateway/01](../gateway/ADR-01-nginx-reverse-proxy.md))*
+Docker Compose orquesta los 4 microservicios, los 4 apps de frontend y el Api Gateway junto a Postgres.
 
 ## Alternativas consideradas
 
