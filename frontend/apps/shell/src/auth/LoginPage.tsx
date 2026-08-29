@@ -2,10 +2,23 @@
 import { useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSession } from "../session/useSession";
+import { normalizeRol } from "../session/types";
 import "./LoginPage.css";
 
 interface LocationState {
   from?: { pathname: string };
+}
+
+/** Rutas restringidas a "administrador" (ver AppRouter). Duplicado a propósito:
+ * es la única forma de saber, antes de navegar, si state.from le sirve al rol
+ * recién logueado — RequireRole igual bloquea si esto se desincroniza. */
+const ADMIN_ONLY_PREFIXES = ["/administracion", "/reportes"];
+
+function resolveLoginTarget(fromPathname: string | undefined, rol: string): string {
+  if (!fromPathname) return "/reservas";
+  const isAdminOnly = ADMIN_ONLY_PREFIXES.some((prefix) => fromPathname.startsWith(prefix));
+  if (isAdminOnly && normalizeRol(rol) !== "administrador") return "/reservas";
+  return fromPathname;
 }
 
 export function LoginPage() {
@@ -21,9 +34,9 @@ export function LoginPage() {
     setFormError(null);
 
     try {
-      await login({ email, password });
+      const user = await login({ email, password });
       const state = location.state as LocationState | null;
-      navigate(state?.from?.pathname ?? "/reservas", { replace: true });
+      navigate(resolveLoginTarget(state?.from?.pathname, user.rol), { replace: true });
     } catch {
       // No filtrar si el email existe (design.md §4).
       setFormError("Credenciales inválidas");

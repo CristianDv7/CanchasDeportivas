@@ -233,4 +233,27 @@ describe("NuevaReservaPage", () => {
     await user.click(pasado);
     expect(screen.getByRole("button", { name: /confirmar reserva/i })).toBeDisabled();
   });
+
+  it("bug real: cancha+fecha elegidas sin horarios distingue 'sin horarios' de 'elegí cancha y fecha'", async () => {
+    render(<NuevaReservaPage />);
+    const user = userEvent.setup();
+
+    // Antes de elegir nada: mensaje genérico.
+    expect(screen.getByTestId("reserva-form-vacio")).toHaveTextContent(
+      "Elegí una cancha y fecha para ver horarios.",
+    );
+
+    // Cancha 1 solo tiene horario definido para viernes (dia_semana 5); el
+    // 2026-08-24 es lunes ⇒ grilla vacía por falta de horario, no por falta
+    // de selección.
+    await esperarCanchasCargadas();
+    await user.selectOptions(screen.getByTestId("cancha-select"), "1");
+    fireEvent.change(screen.getByTestId("fecha-input"), { target: { value: "2026-08-24" } });
+
+    await waitFor(() =>
+      expect(screen.getByTestId("reserva-form-vacio")).toHaveTextContent(
+        "No hay horarios disponibles para esta cancha en esta fecha.",
+      ),
+    );
+  });
 });

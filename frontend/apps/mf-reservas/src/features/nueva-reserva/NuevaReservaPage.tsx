@@ -137,6 +137,7 @@ export function NuevaReservaPage() {
       )}
 
       <ReservaForm
+        canchaId={canchaId}
         fecha={fecha}
         bloques={disponibilidad.data?.bloques ?? []}
         seleccionado={bloqueSeleccionado}

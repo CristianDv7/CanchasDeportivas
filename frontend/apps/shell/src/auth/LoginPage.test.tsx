@@ -81,6 +81,30 @@ describe("LoginPage", () => {
     expect(await screen.findByText("Administracion Home")).toBeInTheDocument();
   });
 
+  it("submit válido ignora state.from admin si el rol no es administrador", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        jsonResponse({
+          access_token: "tok",
+          token_type: "bearer",
+          usuario_id: 3,
+          nombre: "Cami",
+          email: "cami@test.com",
+          rol: "usuario",
+        }),
+      ),
+    );
+    renderLoginPage([{ pathname: "/login", state: { from: { pathname: "/administracion" } } }]);
+    const user = userEvent.setup();
+
+    await user.type(screen.getByLabelText(/email/i), "cami@test.com");
+    await user.type(screen.getByLabelText(/contraseña/i), "secreta");
+    await user.click(screen.getByRole("button", { name: /ingresar/i }));
+
+    expect(await screen.findByText("Reservas Home")).toBeInTheDocument();
+  });
+
   it("submit inválido muestra error sin navegar", async () => {
     vi.stubGlobal(
       "fetch",

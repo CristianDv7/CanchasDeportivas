@@ -7,6 +7,7 @@ import { hasStarted } from "../../domain/rules";
 import "./ReservaForm.css";
 
 export interface ReservaFormProps {
+  readonly canchaId: number | null;
   readonly fecha: IsoDate | null;
   readonly bloques: readonly BloqueDisponibilidad[];
   readonly seleccionado: BloqueDisponibilidad | null;
@@ -16,6 +17,7 @@ export interface ReservaFormProps {
 }
 
 export function ReservaForm({
+  canchaId,
   fecha,
   bloques,
   seleccionado,
@@ -38,7 +40,9 @@ export function ReservaForm({
   if (bloques.length === 0) {
     return (
       <p data-testid="reserva-form-vacio" className="mfr-reserva-form-vacio">
-        Elegí una cancha y fecha para ver horarios.
+        {canchaId === null || fecha === null
+          ? "Elegí una cancha y fecha para ver horarios."
+          : "No hay horarios disponibles para esta cancha en esta fecha."}
       </p>
     );
   }

@@ -49,6 +49,13 @@ class ApiErrorImpl extends Error implements ApiError {
   }
 }
 
+/** Pydantic v2 prefija los ValueError de un @model_validator con "Value error, "
+ * — detalle de implementación del backend, no un mensaje pensado para el
+ * usuario final. Se pela acá, en el único punto donde se aplana `detail`. */
+function stripPydanticValueErrorPrefix(msg: string): string {
+  return msg.replace(/^Value error,\s*/, "");
+}
+
 function extractDetail(body: unknown): string | undefined {
   if (typeof body !== "object" || body === null || !("detail" in body)) return undefined;
 
@@ -59,7 +66,7 @@ function extractDetail(body: unknown): string | undefined {
     return detail
       .map((item) => {
         if (item && typeof item === "object" && "msg" in item) {
-          return String((item as { msg: unknown }).msg);
+          return stripPydanticValueErrorPrefix(String((item as { msg: unknown }).msg));
         }
         return JSON.stringify(item);
       })

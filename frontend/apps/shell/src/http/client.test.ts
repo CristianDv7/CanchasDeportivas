@@ -149,6 +149,31 @@ describe("createApiClient — mapeo de errores", () => {
     expect((caught as { body: unknown }).body).toMatchObject({ detail: detailArray });
   });
 
+  it("422 con ValueError de un model_validator pela el prefijo 'Value error, ' de Pydantic", async () => {
+    const store = createMemorySessionStore({ mirror: createNullMirror() });
+    store.set({ user, token: "tok-abc" });
+    const detailArray = [
+      {
+        loc: ["body"],
+        msg: "Value error, La hora de inicio debe ser menor que la hora de fin",
+        type: "value_error",
+      },
+    ];
+    const fetchImpl = vi.fn().mockResolvedValue(jsonResponse({ detail: detailArray }, 422));
+    const client = createApiClient({ fetchImpl, store, config });
+
+    let caught: unknown;
+    try {
+      await client.post("/horarios", { foo: "bar" }, { service: "canchas" });
+    } catch (err) {
+      caught = err;
+    }
+
+    expect((caught as { detail: string }).detail).toBe(
+      "La hora de inicio debe ser menor que la hora de fin",
+    );
+  });
+
   it("204 / body vacío resuelve undefined sin intentar JSON.parse", async () => {
     const store = createMemorySessionStore({ mirror: createNullMirror() });
     store.set({ user, token: "tok-abc" });

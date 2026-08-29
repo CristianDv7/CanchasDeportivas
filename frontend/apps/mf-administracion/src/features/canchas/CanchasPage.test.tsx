@@ -85,6 +85,19 @@ describe("CanchasPage — alta (8.1/8.2)", () => {
 });
 
 describe("CanchasPage — edición (8.3)", () => {
+  it("bug real: el form de edición indica qué cancha se está editando (no se confunde con 'Nueva cancha')", async () => {
+    render(<CanchasPage />);
+    await screen.findAllByTestId(/^cancha-row-/);
+
+    await userEvent.click(
+      within(screen.getByTestId("cancha-row-2")).getByRole("button", { name: /^editar$/i }),
+    );
+
+    expect(screen.getByTestId("cancha-form-titulo")).toHaveTextContent(
+      "Editando: Cancha 2 - Paddle",
+    );
+  });
+
   it("edición exitosa refetchea el listado", async () => {
     let listCalls = 0;
     server.use(

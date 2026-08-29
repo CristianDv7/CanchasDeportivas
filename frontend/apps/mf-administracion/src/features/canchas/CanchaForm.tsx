@@ -26,6 +26,10 @@ export function CanchaForm({ deportes, initial, pending, onSubmit, onCancel }: C
         onSubmit({ nombre, deporteId: Number(deporteId) });
       }}
     >
+      <h3 data-testid="cancha-form-titulo">
+        {initial ? `Editando: ${initial.nombre}` : "Nueva cancha"}
+      </h3>
+
       <label htmlFor="cancha-form-nombre">Nombre</label>
       <input
         id="cancha-form-nombre"
