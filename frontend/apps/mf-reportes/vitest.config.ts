@@ -7,6 +7,15 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   test: {
     environment: "jsdom",
+    // Fija el origin de jsdom (design.md §9, tabla MSW, copiado de
+    // mf-administracion): MSW intercepta `fetch` relativo a
+    // `window.location`, así que el origin debe quedar explícito y estable
+    // en vez de heredar cualquier default. Puerto real: rsbuild.config.ts.
+    environmentOptions: {
+      jsdom: {
+        url: "http://localhost:3003/",
+      },
+    },
     globals: true,
     setupFiles: ["./setupTests.ts"],
   },

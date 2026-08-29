@@ -1,0 +1,33 @@
+.mfrp-actualizar-btn {
+  background: var(--turf);
+  color: var(--surface);
+  border: none;
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity var(--transition);
+  margin-bottom: var(--space-4);
+}
+
+.mfrp-actualizar-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mfrp-rango-invalido {
+  color: var(--clay-text);
+  font-size: 0.85rem;
+  margin-bottom: var(--space-4);
+}
+
+.mfrp-total {
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.mfrp-total strong {
+  font-family: var(--font-mono);
+  color: var(--turf-text);
+}

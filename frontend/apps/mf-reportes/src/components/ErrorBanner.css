@@ -1,0 +1,35 @@
+.mfrp-error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  background: var(--clay-soft);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--clay);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.mfrp-error-banner p {
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+
+.mfrp-error-retry {
+  flex-shrink: 0;
+  background: var(--surface);
+  border: 1px solid var(--clay);
+  color: var(--clay);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.mfrp-error-retry:hover {
+  background: var(--clay);
+  color: var(--surface);
+}
