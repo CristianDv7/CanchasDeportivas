@@ -6,21 +6,32 @@
 // (bloque ya iniciado o estado ≠ Confirmada) — más simple de testear y
 // consistente en los dos escenarios.
 import type { Reserva } from "../../api";
+import { DeporteIcon } from "../../components/DeporteIcon";
 import { EstadoBadge } from "../../components/EstadoBadge";
 import { canCancel } from "../../domain/rules";
 import "./ReservaRow.css";
 
 export interface ReservaRowProps {
   readonly reserva: Reserva;
+  readonly canchaNombre: string | null;
+  readonly deporteNombre: string | null;
   readonly pending: boolean;
   readonly onCancelar: (id: number) => void;
 }
 
-export function ReservaRow({ reserva, pending, onCancelar }: ReservaRowProps) {
+export function ReservaRow({
+  reserva,
+  canchaNombre,
+  deporteNombre,
+  pending,
+  onCancelar,
+}: ReservaRowProps) {
   const habilitado = canCancel(reserva) && !pending;
 
   return (
     <li data-testid="reserva-row" className="mfr-reserva-row">
+      <DeporteIcon deporte={deporteNombre} />
+      <span className="mfr-reserva-row-cancha">{canchaNombre ?? "Cancha"}</span>
       <span className="mfr-reserva-row-fecha">
         {reserva.fecha} {reserva.horaInicio.slice(0, 5)}–{reserva.horaFin.slice(0, 5)}
       </span>

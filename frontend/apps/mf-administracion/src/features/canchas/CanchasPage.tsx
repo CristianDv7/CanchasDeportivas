@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import { canchasApi, deportesApi } from "../../api";
 import type { Cancha, CanchaInput } from "../../api";
+import { DeporteIcon } from "../../components/DeporteIcon";
 import { EstadoBadge } from "../../components/EstadoBadge";
 import { ErrorBanner } from "../../components/ErrorBanner";
 import { useAction } from "../../hooks/useAction";
@@ -132,6 +133,9 @@ export function CanchasPage() {
         {canchas.data?.map((cancha) => (
           <li key={cancha.id} data-testid={`cancha-row-${cancha.id}`} className="mfa-cancha-row">
             <div className="mfa-cancha-row-header">
+              <DeporteIcon
+                deporte={deportes.data?.find((d) => d.id === cancha.deporteId)?.nombre ?? null}
+              />
               <span className="mfa-cancha-nombre">{cancha.nombre}</span>
               <span data-testid={`cancha-estado-${cancha.id}`}>
                 {cancha.activa ? "Activa" : "Inactiva"}

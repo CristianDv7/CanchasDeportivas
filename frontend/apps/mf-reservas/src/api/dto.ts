@@ -25,6 +25,11 @@ export interface Cancha {
   readonly activa: boolean;
 }
 
+export interface Deporte {
+  readonly id: number;
+  readonly nombre: string;
+}
+
 export interface HorarioAtencion {
   readonly id: number;
   readonly canchaId: number;

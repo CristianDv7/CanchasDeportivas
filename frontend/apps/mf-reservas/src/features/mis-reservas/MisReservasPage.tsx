@@ -7,7 +7,7 @@
 // errores al reservar" — ese refetch-on-error es exclusivo del 400 al crear).
 // El único post-proceso es sobre el CAMINO DE ÉXITO, y ahí el valor de
 // retorno directo de `run()` alcanza (sin closures obsoletas).
-import { reservasApi } from "../../api";
+import { canchasApi, deportesApi, reservasApi } from "../../api";
 import { ErrorBanner } from "../../components/ErrorBanner";
 import { useAction } from "../../hooks/useAction";
 import { useResource } from "../../hooks/useResource";
@@ -16,6 +16,11 @@ import "./MisReservasPage.css";
 
 export function MisReservasPage() {
   const misReservas = useResource(reservasApi.listMias, []);
+  // Solo para nombre de cancha + ícono de deporte por fila (decorativo): un
+  // 404/500 acá no debe romper la lista de reservas, así que no se propaga
+  // ningún ErrorBanner por estos dos — degradan a "Cancha" + ícono genérico.
+  const canchas = useResource(canchasApi.list, []);
+  const deportes = useResource(deportesApi.list, []);
   const cancelarReserva = useAction(reservasApi.cancelar);
 
   async function handleCancelar(id: number) {
@@ -43,14 +48,20 @@ export function MisReservasPage() {
 
       {misReservas.data && misReservas.data.length > 0 && (
         <ul className="mfr-reservas-list">
-          {misReservas.data.map((reserva) => (
-            <ReservaRow
-              key={reserva.id}
-              reserva={reserva}
-              pending={cancelarReserva.pending}
-              onCancelar={handleCancelar}
-            />
-          ))}
+          {misReservas.data.map((reserva) => {
+            const cancha = canchas.data?.find((c) => c.id === reserva.canchaId) ?? null;
+            const deporte = deportes.data?.find((d) => d.id === cancha?.deporteId) ?? null;
+            return (
+              <ReservaRow
+                key={reserva.id}
+                reserva={reserva}
+                canchaNombre={cancha?.nombre ?? null}
+                deporteNombre={deporte?.nombre ?? null}
+                pending={cancelarReserva.pending}
+                onCancelar={handleCancelar}
+              />
+            );
+          })}
         </ul>
       )}
     </section>

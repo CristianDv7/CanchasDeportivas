@@ -25,6 +25,16 @@
   color: var(--ink-muted);
 }
 
+.mfr-picker-cancha-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.mfr-picker-cancha-row select {
+  flex: 1;
+}
+
 .mfr-picker-field select,
 .mfr-picker-field input {
   font-family: var(--font-body);

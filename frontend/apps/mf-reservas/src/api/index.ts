@@ -2,8 +2,10 @@
 // (design.md §1). `raw.ts` NO se re-exporta acá a propósito — es privado del
 // módulo (regla dura del desacople del gateway).
 export { canchasApi } from "./canchasApi";
+export { deportesApi } from "./deportesApi";
 export type {
   Cancha,
+  Deporte,
   Disponibilidad,
   BloqueDisponibilidad,
   EstadoBloque,

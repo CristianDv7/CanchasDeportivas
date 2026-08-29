@@ -3,6 +3,7 @@
 import type {
   BloqueDisponibilidad,
   Cancha,
+  Deporte,
   Disponibilidad,
   EstadoBloque,
   EstadoReserva,
@@ -11,7 +12,7 @@ import type {
   NuevaReservaInput,
   Reserva,
 } from "./dto";
-import type { CanchaRaw, HorarioAtencionRaw, ReservaRaw } from "./raw";
+import type { CanchaRaw, DeporteRaw, HorarioAtencionRaw, ReservaRaw } from "./raw";
 
 const ESTADOS_RESERVA: readonly EstadoReserva[] = ["Confirmada", "Cancelada", "Finalizada"];
 
@@ -51,6 +52,13 @@ export function toCancha(raw: CanchaRaw): Cancha {
     nombre: raw.nombre,
     deporteId: raw.deporte_id,
     activa: raw.activo,
+  };
+}
+
+export function toDeporte(raw: DeporteRaw): Deporte {
+  return {
+    id: raw.id,
+    nombre: raw.nombre,
   };
 }
 

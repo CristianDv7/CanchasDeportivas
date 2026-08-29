@@ -22,6 +22,13 @@ export interface CanchaRaw {
   updated_at: string;
 }
 
+export interface DeporteRaw {
+  id: number;
+  nombre: string;
+  descripcion: string | null;
+  activo: boolean;
+}
+
 // Shape real de GET /horarios-atencion (ms-canchas, sin auth). Reemplaza el
 // contrato PROPUESTO `DisponibilidadRaw`/`BloqueRaw` (grilla ya armada) que
 // nunca implementó el backend: ahora el frontend arma la grilla combinando

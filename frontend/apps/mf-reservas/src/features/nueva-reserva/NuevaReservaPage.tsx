@@ -8,7 +8,7 @@
 // `contarActivas`) y la creación (`useAction(reservasApi.crear)`).
 import { useEffect, useState } from "react";
 import { useSession } from "shell/session";
-import { canchasApi, reservasApi } from "../../api";
+import { canchasApi, deportesApi, reservasApi } from "../../api";
 import type { BloqueDisponibilidad, IsoDate, NuevaReservaInput, Reserva } from "../../api";
 import { ErrorBanner } from "../../components/ErrorBanner";
 import { contarActivas } from "../../domain/rules";
@@ -24,6 +24,7 @@ export function NuevaReservaPage() {
   const usuarioId = session.user?.id ?? null;
 
   const canchas = useResource(canchasApi.list, []);
+  const deportes = useResource(deportesApi.list, []);
   const [canchaId, setCanchaId] = useState<number | null>(null);
   const [fecha, setFecha] = useState<IsoDate | null>(null);
   const disponibilidad = useDisponibilidad(canchaId, fecha);
@@ -103,6 +104,7 @@ export function NuevaReservaPage() {
 
       <CanchaFechaPicker
         canchas={canchas.data ?? []}
+        deportes={deportes.data ?? []}
         canchaId={canchaId}
         fecha={fecha}
         onCanchaChange={handleCanchaChange}
@@ -128,6 +130,7 @@ export function NuevaReservaPage() {
       )}
 
       <ReservaForm
+        fecha={fecha}
         bloques={disponibilidad.data?.bloques ?? []}
         seleccionado={bloqueSeleccionado}
         pending={crearReserva.pending}

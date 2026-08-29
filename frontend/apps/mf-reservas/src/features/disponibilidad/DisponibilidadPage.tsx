@@ -4,7 +4,7 @@
 // Loading/error se muestran con `ErrorBanner` (design.md §3): ningún
 // componente ramifica por `status`/texto, solo por `action`.
 import { useState } from "react";
-import { canchasApi } from "../../api";
+import { canchasApi, deportesApi } from "../../api";
 import type { IsoDate } from "../../api";
 import { ErrorBanner } from "../../components/ErrorBanner";
 import { useResource } from "../../hooks/useResource";
@@ -15,6 +15,7 @@ import "./DisponibilidadPage.css";
 
 export function DisponibilidadPage() {
   const canchas = useResource(canchasApi.list, []);
+  const deportes = useResource(deportesApi.list, []);
   const [canchaId, setCanchaId] = useState<number | null>(null);
   const [fecha, setFecha] = useState<IsoDate | null>(null);
 
@@ -28,6 +29,7 @@ export function DisponibilidadPage() {
 
       <CanchaFechaPicker
         canchas={canchas.data ?? []}
+        deportes={deportes.data ?? []}
         canchaId={canchaId}
         fecha={fecha}
         onCanchaChange={setCanchaId}

@@ -22,6 +22,11 @@ export const canchasRaw = [
   },
 ];
 
+export const deportesRaw = [
+  { id: 1, nombre: "Fútbol", descripcion: null, activo: true },
+  { id: 2, nombre: "Pádel", descripcion: null, activo: true },
+];
+
 export const reservasRaw = [
   {
     id: 10,

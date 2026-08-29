@@ -3,10 +3,18 @@
 // `/api/{service}/**`, nunca `http://localhost:8003/**`. Paths reales:
 // design.md §1.
 import { HttpResponse, http } from "msw";
-import { canchasRaw, disponibilidadReservasRaw, horariosAtencionRaw, reservasRaw } from "./fixtures";
+import {
+  canchasRaw,
+  deportesRaw,
+  disponibilidadReservasRaw,
+  horariosAtencionRaw,
+  reservasRaw,
+} from "./fixtures";
 
 export const handlers = [
   http.get("/api/canchas/canchas", () => HttpResponse.json(canchasRaw)),
+
+  http.get("/api/canchas/deportes", () => HttpResponse.json(deportesRaw)),
 
   http.get("/api/reservas/reservas/", () => HttpResponse.json(reservasRaw)),
 

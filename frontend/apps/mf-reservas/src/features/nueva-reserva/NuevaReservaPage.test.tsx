@@ -6,15 +6,23 @@
 import { HttpResponse, http } from "msw";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { disponibilidadReservasRaw } from "../../mocks/fixtures";
 import { errorScenarios } from "../../mocks/handlers";
 import { seedSession } from "../../mocks/session";
 import { server } from "../../mocks/server";
 import { NuevaReservaPage } from "./NuevaReservaPage";
 
+// Ancla de reloj para todo el archivo: anterior a la fecha 2026-08-28 usada
+// en los fixtures de este test, así ningún bloque aparece "pasado" (mismo
+// criterio que MisReservasPage.test.tsx para RN-04/hasStarted).
 beforeEach(() => {
   seedSession();
+  vi.setSystemTime(new Date("2026-08-27T00:00:00Z"));
+});
+
+afterEach(() => {
+  vi.useRealTimers();
 });
 
 async function esperarCanchasCargadas() {
@@ -177,5 +185,35 @@ describe("NuevaReservaPage", () => {
 
     await user.click(radio);
     expect(screen.getByRole("button", { name: /confirmar reserva/i })).toBeEnabled();
+  });
+
+  it("bug real (2026-08-29): un bloque cuya hora de inicio ya pasó no es reservable (deshabilitado, 'pasado')", async () => {
+    // 08:00 ya inició (08:30 > 08:00), 09:00 sigue libre y futuro, 10:00 está
+    // ocupado por disponibilidadReservasRaw — las tres etiquetas en una sola
+    // fecha (design.md §12 hasStarted, mismo criterio que RN-04 en cancelar).
+    vi.setSystemTime(new Date("2026-08-28T08:30:00Z"));
+
+    render(<NuevaReservaPage />);
+    const user = userEvent.setup();
+
+    await esperarCanchasCargadas();
+    await user.selectOptions(screen.getByTestId("cancha-select"), "1");
+    fireEvent.change(screen.getByTestId("fecha-input"), { target: { value: "2026-08-28" } });
+
+    const radios = await screen.findAllByTestId("bloque-radio");
+    expect(radios).toHaveLength(3);
+
+    const [pasado, libre, ocupado] = radios as [HTMLElement, HTMLElement, HTMLElement];
+    expect(screen.getByText(/08:00–09:00 · pasado/)).toBeInTheDocument();
+    expect(pasado).toBeDisabled();
+    expect(screen.getByText(/09:00–10:00 · libre/)).toBeInTheDocument();
+    expect(libre).toBeEnabled();
+    expect(screen.getByText(/10:00–11:00 · ocupado/)).toBeInTheDocument();
+    expect(ocupado).toBeDisabled();
+
+    // El botón nunca se habilita para el bloque pasado, ni siquiera intentando
+    // seleccionarlo (disabled bloquea el click real del usuario).
+    await user.click(pasado);
+    expect(screen.getByRole("button", { name: /confirmar reserva/i })).toBeDisabled();
   });
 });
