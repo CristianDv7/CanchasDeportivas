@@ -52,3 +52,42 @@ describe("App — navegación interna de mf-reservas", () => {
     expect(await screen.findByRole("heading", { name: /nueva reserva/i })).toBeInTheDocument();
   });
 });
+
+describe("App — reservar/cancelar es exclusivo de rol usuario", () => {
+  it("admin NO ve los links 'Nueva reserva' ni 'Mis reservas' (solo administra vía mf-administracion)", () => {
+    seedSession({ rol: "administrador" });
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole("heading", { name: /disponibilidad/i })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /nueva reserva/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /mis reservas/i })).not.toBeInTheDocument();
+  });
+
+  it("admin no puede llegar a /mias ni tipeando la URL directo (defensa en profundidad, no solo ocultar el link)", () => {
+    seedSession({ rol: "administrador" });
+    render(
+      <MemoryRouter initialEntries={["/mias"]}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.queryByRole("heading", { name: /mis reservas/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /disponibilidad/i })).toBeInTheDocument();
+  });
+
+  it("usuario sí ve los 3 links (comportamiento sin cambios)", () => {
+    seedSession({ rol: "usuario" });
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole("link", { name: /nueva reserva/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /mis reservas/i })).toBeInTheDocument();
+  });
+});
