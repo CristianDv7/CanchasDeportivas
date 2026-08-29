@@ -62,6 +62,23 @@ describe("NuevaReservaPage", () => {
     expect(await screen.findByTestId("reserva-exito")).toBeInTheDocument();
   });
 
+  it("bug real (2026-08-29): la confirmación de éxito dice qué cancha/fecha/horario quedó reservado, no solo 'confirmada'", async () => {
+    // Antes solo decía "Reserva confirmada." sin más — si el usuario se
+    // equivocaba de cancha al reservar, no se daba cuenta hasta ir a "Mis
+    // reservas" por separado.
+    render(<NuevaReservaPage />);
+    const user = userEvent.setup();
+
+    const radio = await elegirCanchaFechaYBloqueLibre(user);
+    await user.click(radio);
+    await user.click(screen.getByRole("button", { name: /confirmar reserva/i }));
+
+    const mensaje = await screen.findByTestId("reserva-exito");
+    expect(mensaje).toHaveTextContent("Cancha 1 - Fútbol 5");
+    expect(mensaje).toHaveTextContent("2026-08-28");
+    expect(mensaje).toHaveTextContent("08:00");
+  });
+
   it("400 al crear: muestra el detail verbatim y refetchea disponibilidad, limpiando la selección (7.2)", async () => {
     let disponibilidadCalls = 0;
     server.use(

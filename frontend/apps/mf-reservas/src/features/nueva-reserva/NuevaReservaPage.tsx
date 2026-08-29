@@ -32,7 +32,11 @@ export function NuevaReservaPage() {
   const misReservas = useResource(reservasApi.listMias, []);
 
   const [bloqueSeleccionado, setBloqueSeleccionado] = useState<BloqueDisponibilidad | null>(null);
-  const [exito, setExito] = useState(false);
+  // Bug real (2026-08-29, reportado por el usuario): "Reserva confirmada."
+  // sin más detalle no permite notar una reserva hecha sobre la cancha
+  // equivocada hasta ir a "Mis reservas" — se guarda la reserva creada (no
+  // solo un boolean) para poder mostrar cancha + fecha + horario acá mismo.
+  const [reservaCreada, setReservaCreada] = useState<Reserva | null>(null);
 
   const crearReserva = useAction<NuevaReservaInput, Reserva>((input) => {
     if (usuarioId === null) {
@@ -61,18 +65,18 @@ export function NuevaReservaPage() {
   function handleCanchaChange(id: number) {
     setCanchaId(id);
     setBloqueSeleccionado(null);
-    setExito(false);
+    setReservaCreada(null);
   }
 
   function handleFechaChange(nuevaFecha: IsoDate) {
     setFecha(nuevaFecha);
     setBloqueSeleccionado(null);
-    setExito(false);
+    setReservaCreada(null);
   }
 
   function handleSeleccionarBloque(bloque: BloqueDisponibilidad) {
     setBloqueSeleccionado(bloque);
-    setExito(false);
+    setReservaCreada(null);
   }
 
   async function handleConfirmar() {
@@ -89,7 +93,7 @@ export function NuevaReservaPage() {
     if (creada === null) return;
 
     setBloqueSeleccionado(null);
-    setExito(true);
+    setReservaCreada(creada);
     // Post-éxito (design.md §4, tabla "Consumo por pantalla"): el bloque
     // recién tomado también debe reflejarse en la grilla de disponibilidad.
     misReservas.refetch();
@@ -123,9 +127,12 @@ export function NuevaReservaPage() {
 
       {crearReserva.error && <ErrorBanner error={crearReserva.error} />}
 
-      {exito && (
+      {reservaCreada && (
         <p role="status" data-testid="reserva-exito" className="mfr-reserva-exito">
-          Reserva confirmada.
+          Reserva confirmada: {canchas.data?.find((c) => c.id === reservaCreada.canchaId)?.nombre ?? "Cancha"}
+          {" · "}
+          {reservaCreada.fecha} {reservaCreada.horaInicio.slice(0, 5)}–
+          {reservaCreada.horaFin.slice(0, 5)}
         </p>
       )}
 
