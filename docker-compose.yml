@@ -1,0 +1,236 @@
+services:
+  # ==========================================
+  # BASE DE DATOS
+  # ==========================================
+  postgres:
+    image: postgres:16
+    container_name: backend-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: backend
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/database/init:/docker-entrypoint-initdb.d
+
+  # ==========================================
+  # 1. MICROSERVICIO USUARIOS
+  # ==========================================
+  ms-usuarios:
+    build: 
+      context: ./backend/ms-usuarios
+    container_name: ms-usuarios
+    restart: unless-stopped
+    ports:
+      - "8001:8000" # Swagger: http://localhost:8001/docs
+    env_file:
+      - ./backend/ms-usuarios/.env
+    environment:
+      - DATABASE_URL=postgresql+psycopg://postgres:postgres@postgres:5432/backend
+    depends_on:
+      - postgres
+
+  # ==========================================
+  # 2. MICROSERVICIO CANCHAS
+  # ==========================================
+  ms-canchas:
+    build: 
+      context: ./backend/ms-canchas
+    container_name: ms-canchas
+    restart: unless-stopped
+    ports:
+      - "8002:8000" # Swagger: http://localhost:8002/docs
+    env_file:
+      - ./backend/ms-canchas/.env
+    environment:
+      - DATABASE_URL=postgresql+psycopg://postgres:postgres@postgres:5432/backend
+    depends_on:
+      - postgres
+
+  # ==========================================
+  # 3. MICROSERVICIO RESERVAS
+  # ==========================================
+  ms-reservas:
+    build: 
+      context: ./backend/ms-reservas
+    container_name: ms-reservas
+    restart: unless-stopped
+    ports:
+      - "8003:8000" # Swagger: http://localhost:8003/docs
+    env_file:
+      - ./backend/ms-reservas/.env
+    environment:
+      - DATABASE_URL=postgresql+psycopg://postgres:postgres@postgres:5432/backend
+      - USUARIOS_SERVICE_URL=http://ms-usuarios:8000
+      - CANCHAS_SERVICE_URL=http://ms-canchas:8000
+    depends_on:
+      - postgres
+      - ms-usuarios
+      - ms-canchas
+
+  # ==========================================
+  # 4. MICROSERVICIO REPORTES
+  # ==========================================
+  ms-reportes:
+    build: 
+      context: ./backend/ms-reportes
+    container_name: ms-reportes
+    restart: unless-stopped
+    ports:
+      - "8004:8000" # Swagger: http://localhost:8004/docs
+    env_file:
+      - ./backend/ms-reportes/.env
+    environment:
+      - DATABASE_URL=postgresql+psycopg://postgres:postgres@postgres:5432/backend
+      - CANCHAS_SERVICE_URL=http://ms-canchas:8000
+      - RESERVAS_SERVICE_URL=http://ms-reservas:8000
+    depends_on:
+      - postgres
+      - ms-canchas
+      - ms-reservas
+  
+      # ==========================================
+  # FRONTEND - SHELL (Host)
+  # ==========================================
+  frontend-shell:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: shell
+    container_name: frontend-shell
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - MS_USUARIOS_URL=http://ms-usuarios:8000
+      - MS_CANCHAS_URL=http://ms-canchas:8000
+      - MS_RESERVAS_URL=http://ms-reservas:8000
+      - MS_REPORTES_URL=http://ms-reportes:8000
+      - PUBLIC_API_BASE=/api
+      - PUBLIC_MF_RESERVAS_URL=http://localhost:3001
+      - PUBLIC_MF_ADMINISTRACION_URL=http://localhost:3002
+      - PUBLIC_MF_REPORTES_URL=http://localhost:3003
+      - PUBLIC_SHELL_URL=http://localhost:3000
+      - PUBLIC_BUILD_ID=dev-docker
+    volumes:
+      # Montar TODO el workspace para hot-reload
+      - ./frontend:/app
+      # Proteger node_modules: ocultan los del host (Windows) y dejan los del build
+      - /app/node_modules
+      - /app/apps/shell/node_modules
+      - /app/apps/mf-reservas/node_modules
+      - /app/apps/mf-administracion/node_modules
+      - /app/apps/mf-reportes/node_modules
+      - ./frontend/.env:/app/.env:ro
+    depends_on:
+      - ms-usuarios
+      - ms-canchas
+      - ms-reservas
+      - ms-reportes
+
+  # ==========================================
+  # FRONTEND - RESERVAS (Remote)
+  # ==========================================
+  frontend-reservas:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: mf-reservas
+    container_name: frontend-reservas
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PUBLIC_SHELL_URL=http://localhost:3000
+      - PUBLIC_BUILD_ID=dev-docker
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/apps/shell/node_modules
+      - /app/apps/mf-reservas/node_modules
+      - /app/apps/mf-administracion/node_modules
+      - /app/apps/mf-reportes/node_modules
+      - ./frontend/.env:/app/.env:ro
+
+  # ==========================================
+  # FRONTEND - ADMINISTRACIÓN (Remote)
+  # ==========================================
+  frontend-admin:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: mf-administracion
+    container_name: frontend-admin
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      - PUBLIC_SHELL_URL=http://localhost:3000
+      - PUBLIC_BUILD_ID=dev-docker
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/apps/shell/node_modules
+      - /app/apps/mf-reservas/node_modules
+      - /app/apps/mf-administracion/node_modules
+      - /app/apps/mf-reportes/node_modules
+      - ./frontend/.env:/app/.env:ro
+
+  # ==========================================
+  # FRONTEND - REPORTES (Remote)
+  # ==========================================
+  frontend-reportes:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: mf-reportes
+    container_name: frontend-reportes
+    restart: unless-stopped
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=development
+      - PUBLIC_SHELL_URL=http://localhost:3000
+      - PUBLIC_BUILD_ID=dev-docker
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/apps/shell/node_modules
+      - /app/apps/mf-reservas/node_modules
+      - /app/apps/mf-administracion/node_modules
+      - /app/apps/mf-reportes/node_modules
+      - ./frontend/.env:/app/.env:ro
+
+      # ==========================================
+  # API GATEWAY (Nginx)
+  # ==========================================
+  gateway:
+    image: nginx:alpine
+    container_name: gateway
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./apigateway/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - ms-usuarios
+      - ms-canchas
+      - ms-reservas
+      - ms-reportes
+      - frontend-shell
+
+
+
+
+volumes:
+  postgres_data:
