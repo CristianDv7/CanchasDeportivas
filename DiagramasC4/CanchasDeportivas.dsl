@@ -110,7 +110,7 @@ workspace "Name" "CanchasDeportivas" {
                 }
                 group "Dominio" {
                     authenticationManager = component "Gestor de Autenticación" "Valida credenciales y emite/decodifica el JWT (HS256)." "Componente de dominio"
-                    userManager = component "Gestor de Usuarios" "Administra alta, consulta y asignación de roles." "Componente de dominio"
+                    userManager = component "Gestor de Usuarios" "Administra alta, consulta y asignación de roles; en el alta anónima (autoregistro) fuerza el rol usuario del lado del servidor, nunca confía en el rol recibido del cliente." "Componente de dominio"
                     accessGuard = component "Guardia de Acceso" "Resuelve el usuario autenticado y exige rol admin donde corresponde." "Componente de dominio"
                 }
                 group "Persistencia" {
@@ -188,6 +188,7 @@ workspace "Name" "CanchasDeportivas" {
         sportCourt.shell -> sportCourt.mfAdmin "Carga y orquesta el microfrontend de administración mediante Module Federation"
         sportCourt.shell -> sportCourt.mfReports "Carga y orquesta el microfrontend de reportes mediante Module Federation"
 
+        sportCourt.shell -> sportCourt.apiGateway "Autentica y registra usuarios (login, autoregistro) mediante REST"
         sportCourt.mfReservation -> sportCourt.apiGateway "Solicita disponibilidad, creación y cancelación de reservas mediante REST"
         sportCourt.mfAdmin -> sportCourt.apiGateway "Solicita gestión de canchas, horarios, usuarios y reservas mediante REST"
         sportCourt.mfReports -> sportCourt.apiGateway "Solicita información para generar reportes mediante REST"
@@ -209,7 +210,7 @@ workspace "Name" "CanchasDeportivas" {
         # Ms Usuarios
         sportCourt.msUsers.authApi -> sportCourt.msUsers.authenticationManager "Delega la validación de credenciales y la emisión del token"
         sportCourt.msUsers.authenticationManager -> sportCourt.msUsers.usuarioRepository "Verifica credenciales y busca el usuario"
-        sportCourt.msUsers.usuariosApi -> sportCourt.msUsers.accessGuard "Valida el token y el rol del solicitante"
+        sportCourt.msUsers.usuariosApi -> sportCourt.msUsers.accessGuard "Valida el token y el rol del solicitante, salvo en el alta pública (autoregistro), que es anónima por diseño"
         sportCourt.msUsers.usuariosApi -> sportCourt.msUsers.userManager "Delega las operaciones CRUD"
         sportCourt.msUsers.accessGuard -> sportCourt.msUsers.authenticationManager "Reutiliza la decodificación del token"
         sportCourt.msUsers.userManager -> sportCourt.msUsers.usuarioRepository "Lee y escribe usuarios"
