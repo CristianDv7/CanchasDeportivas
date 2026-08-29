@@ -141,7 +141,7 @@ describe("NuevaReservaPage", () => {
     expect(disponibilidadCalls).toBe(1);
   });
 
-  it("422 al crear: muestra el detail ya aplanado, sin refetch de disponibilidad (7.3)", async () => {
+  it("422 al crear: muestra mensaje genérico (no el detail crudo del backend), sin refetch de disponibilidad (7.3)", async () => {
     let disponibilidadCalls = 0;
     server.use(
       http.get("/api/reservas/reservas/disponibilidad", () => {
@@ -161,7 +161,7 @@ describe("NuevaReservaPage", () => {
     await user.click(screen.getByRole("button", { name: /confirmar reserva/i }));
 
     const banner = await screen.findByRole("alert");
-    expect(banner).toHaveTextContent("campo inválido");
+    expect(banner).toHaveTextContent("La fecha ingresada no es válida.");
 
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(disponibilidadCalls).toBe(1);

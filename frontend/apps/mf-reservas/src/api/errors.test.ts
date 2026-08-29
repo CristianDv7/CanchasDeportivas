@@ -59,14 +59,22 @@ describe("mapApiError", () => {
     expect(result.message).not.toBe("irrelevante");
   });
 
-  it("422: detail ya aplanado por apiClient", () => {
+  it("422: mensaje genérico, NUNCA el detail crudo del backend", () => {
+    // Bug real (2026-08-28): un año de 5 dígitos en el date picker nativo
+    // llega hasta el backend y Pydantic responde con su mensaje interno en
+    // inglés ("Input should be a valid integer, unable to parse string as an
+    // integer") — mostrarlo tal cual es un error de UX, no un detalle de
+    // implementación aceptable. `detail` en 422 puede ser texto de validación
+    // interno de FastAPI/Pydantic, no un mensaje curado para el usuario final
+    // (a diferencia de 400, donde el backend sí manda español pensado para
+    // mostrarse — ver caso 400 arriba).
     const error = fakeApiError({
       status: 422,
       code: "validation",
-      detail: "fecha: campo inválido",
+      detail: "Input should be a valid integer, unable to parse string as an integer",
     });
     expect(mapApiError(error)).toEqual({
-      message: "fecha: campo inválido",
+      message: "La fecha ingresada no es válida.",
       action: "none",
       status: 422,
     });

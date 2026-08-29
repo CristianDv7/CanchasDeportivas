@@ -67,3 +67,28 @@ export function estadoBadge(estado: EstadoReserva | null): { label: string; tone
   if (estado === null) return { label: "Desconocido", tone: "neutral" };
   return BADGES[estado];
 }
+
+/**
+ * Bug real (2026-08-28): `input[type=date]` NO impide vía teclado un año de
+ * más de 4 dígitos (ej. "92026-02-08") — ese string llega tal cual hasta el
+ * backend, que responde 422 con un mensaje interno de Pydantic en inglés
+ * mostrado sin filtrar al usuario. Formato estricto YYYY-MM-DD (año de
+ * EXACTAMENTE 4 dígitos) + validación de calendario real vía `Date`, no solo
+ * la forma del string.
+ */
+export function isValidFecha(fecha: string): boolean {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(fecha);
+  if (match === null) return false;
+
+  const [, y, m, d] = match as unknown as [string, string, string, string];
+  const year = Number(y);
+  const month = Number(m);
+  const day = Number(d);
+  const date = new Date(Date.UTC(year, month - 1, day));
+
+  return (
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day
+  );
+}

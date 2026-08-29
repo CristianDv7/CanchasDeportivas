@@ -43,9 +43,13 @@ export function mapApiError(error: unknown): UiError {
   }
 
   if (status === 422) {
-    // Ya aplanado por apiClient (extractDetail): bug nuestro o input
-    // inválido, no del servidor.
-    return { message: detail, action: "none", status };
+    // NO mostrar `detail` tal cual: a diferencia de 400 (donde el backend
+    // manda español curado para el usuario), un 422 puede ser el mensaje
+    // interno de validación de FastAPI/Pydantic ("Input should be a valid
+    // integer, unable to parse string as an integer") — texto de
+    // implementación en inglés, nunca pensado para mostrarse. Bug real
+    // (2026-08-28): un año de 5 dígitos en el date picker lo disparó.
+    return { message: "La fecha ingresada no es válida.", action: "none", status };
   }
 
   if (status === 401) {

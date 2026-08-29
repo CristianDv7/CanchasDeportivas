@@ -4,7 +4,7 @@
 // (eso queda para el nivel de componente, ver design.md tabla §5).
 import { describe, expect, it } from "vitest";
 import type { Reserva } from "../api/dto";
-import { canCancel, contarActivas, estadoBadge, hasStarted, toUtcMillis } from "./rules";
+import { canCancel, contarActivas, estadoBadge, hasStarted, isValidFecha, toUtcMillis } from "./rules";
 
 function reserva(overrides: Partial<Reserva> = {}): Reserva {
   return {
@@ -116,5 +116,28 @@ describe("estadoBadge", () => {
   it("estado null ⇒ badge neutro sin throwear", () => {
     expect(() => estadoBadge(null)).not.toThrow();
     expect(estadoBadge(null).label).toBeTruthy();
+  });
+});
+
+describe("isValidFecha", () => {
+  it("true: fecha ISO bien formada de 4 dígitos de año", () => {
+    expect(isValidFecha("2026-08-28")).toBe(true);
+  });
+
+  it("false: año de 5 dígitos (bug real: input[type=date] no lo impide)", () => {
+    expect(isValidFecha("92026-02-08")).toBe(false);
+  });
+
+  it("false: string vacío", () => {
+    expect(isValidFecha("")).toBe(false);
+  });
+
+  it("false: mes o día fuera de rango", () => {
+    expect(isValidFecha("2026-13-01")).toBe(false);
+    expect(isValidFecha("2026-02-30")).toBe(false);
+  });
+
+  it("false: formato no-ISO", () => {
+    expect(isValidFecha("28/08/2026")).toBe(false);
   });
 });

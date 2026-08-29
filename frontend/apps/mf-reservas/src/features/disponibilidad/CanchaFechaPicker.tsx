@@ -2,6 +2,7 @@
 // controlado: no guarda estado propio, delega en `DisponibilidadPage`
 // (design.md §7).
 import type { Cancha, IsoDate } from "../../api";
+import { isValidFecha } from "../../domain/rules";
 import "./CanchaFechaPicker.css";
 
 export interface CanchaFechaPickerProps {
@@ -47,7 +48,12 @@ export function CanchaFechaPicker({
           type="date"
           data-testid="fecha-input"
           value={fecha ?? ""}
-          onChange={(event) => onFechaChange(event.target.value)}
+          onChange={(event) => {
+            // Bug real (2026-08-28): input[type=date] no impide vía teclado
+            // un año fuera de rango (ej. 5 dígitos) — se filtra acá antes de
+            // propagar, en vez de dejar que llegue a la API.
+            if (isValidFecha(event.target.value)) onFechaChange(event.target.value);
+          }}
         />
       </div>
     </div>
