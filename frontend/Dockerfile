@@ -1,7 +1,11 @@
-FROM node:20-alpine
+FROM node:22-alpine
 WORKDIR /app
 
-RUN npm install -g pnpm
+# packageManager en package.json fija pnpm@11.24.0, que requiere Node >=22.13
+# (usa node:sqlite) — node:20-alpine no alcanza. Corepack (viene con Node)
+# activa esa versión exacta, en vez de "npm install -g pnpm" (instala la
+# última publicada, sin relación con la fijada acá).
+RUN corepack enable && corepack prepare pnpm@11.24.0 --activate
 
 # No preguntar confirmaciones en build (por si queda algún node_modules residual)
 ENV CI=true
